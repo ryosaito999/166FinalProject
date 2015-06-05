@@ -377,7 +377,7 @@ public class ProfNetwork {
 
 
    /* Functions we need to implement */
-
+   // User code goes here!
     public static void FriendList(ProfNetwork esql) {
 
       return ;
