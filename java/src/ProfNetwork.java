@@ -291,9 +291,7 @@ public class ProfNetwork {
               }
             }
 
-            else{
-                System.out.println("Invalid username/password!");
-            }
+           
          }//end while
       }catch(Exception e) {
          System.err.println (e.getMessage ());
@@ -352,7 +350,7 @@ public class ProfNetwork {
          String email = in.readLine();
 
 	 //Creating empty contact\block lists for a user
-	 String query = String.format("INSERT INTO USR (userId, password, email, contact_list) VALUES ('%s','%s','%s')", login, password, email);
+	 String query = String.format("INSERT INTO USR (userId, password, email) VALUES ('%s','%s','%s')", login, password, email);
 
          esql.executeUpdate(query);
          System.out.println ("User successfully created!");
@@ -372,9 +370,7 @@ public class ProfNetwork {
          System.out.print("\tEnter user password: ");
          String password = in.readLine();
 
-         String query = String.format("SELECT * FROM USR U WHERE U.userId = '%s' AND U.password = '%s'", login, password);
-	 System.out.print(query + "\n");
-	 
+         String query = String.format("SELECT * FROM USR WHERE userId = '%s' AND password = '%s'", login, password);
          int userNum = esql.executeQuery(query);
 	 if (userNum > 0)
 		return login;
