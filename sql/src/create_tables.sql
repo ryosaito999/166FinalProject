@@ -6,8 +6,8 @@ DROP TABLE USR;
 
 
 CREATE TABLE USR(
-	userId varchar(50) UNIQUE NOT NULL, 
-	password varchar(50) NOT NULL,
+	userId char(50) UNIQUE NOT NULL, 
+	password char(50) NOT NULL,
 	email text NOT NULL,
 	name char(50),
 	dateOfBirth date,
@@ -20,7 +20,9 @@ CREATE TABLE WORK_EXPR(
 	location char(50),
 	startDate date,
 	endDate date,
-	PRIMARY KEY(userId,company,role,startDate));
+	PRIMARY KEY(userId,company,role,startDate),
+	FOREIGN KEY(userId) REFERENCES USR);
+
 
 CREATE TABLE EDUCATIONAL_DETAILS(
 	userId char(50) NOT NULL, 
@@ -29,7 +31,9 @@ CREATE TABLE EDUCATIONAL_DETAILS(
 	degree char(50) NOT NULL,
 	startdate date,
 	enddate date,
-	PRIMARY KEY(userId,major,degree));
+	PRIMARY KEY(userId,major,degree),
+	FOREIGN KEY(userId) REFERENCES USR);
+
 
 CREATE TABLE MESSAGE(
 	msgId integer UNIQUE NOT NULL, 
@@ -45,4 +49,6 @@ CREATE TABLE CONNECTION_USR(
 	userId char(50) NOT NULL, 
 	connectionId char(50) NOT NULL, 
 	status char(30) NOT NULL,
-	PRIMARY KEY(userId,connectionId));
+	PRIMARY KEY(userId,connectionId),
+	FOREIGN KEY(userId) REFERENCES USR);
+
