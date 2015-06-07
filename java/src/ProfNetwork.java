@@ -372,7 +372,9 @@ public class ProfNetwork {
          System.out.print("\tEnter user password: ");
          String password = in.readLine();
 
-         String query = String.format("SELECT * FROM USR WHERE userId = '%s' AND password = '%s'", login, password);
+         String query = String.format("SELECT * FROM USR U WHERE U.userId = '%s' AND U.password = '%s'", login, password);
+	 System.out.print(query + "\n");
+	 
          int userNum = esql.executeQuery(query);
 	 if (userNum > 0)
 		return login;
