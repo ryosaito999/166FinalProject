@@ -272,8 +272,14 @@ public class ProfNetwork {
                 System.out.println("2. Update Profile");
                 System.out.println("3. Write a new message");
                 System.out.println("4. Send Friend Request");
-                System.out.println(".........................");
-                System.out.println("9. Log out");
+                System.out.println("5. Change Password");
+                System.out.println("6. Search Users");
+                System.out.println("7. View all Friends");
+                System.out.println("8. Goto a friend's profile");
+                System.out.println("9. Send a message");
+                System.out.println("10. Log out");
+
+
                 switch (readChoice()){
                    case 1: FriendList(esql); break;
                    case 2: UpdateProfile(esql); break;
@@ -283,6 +289,10 @@ public class ProfNetwork {
                    default : System.out.println("Unrecognized choice!"); break;
                 }
               }
+            }
+
+            else{
+                System.out.println("Invalid username/password!");
             }
          }//end while
       }catch(Exception e) {
@@ -375,12 +385,11 @@ public class ProfNetwork {
 
 // Rest of the functions definition go in here
 
+   
 
    /* Functions we need to implement */
    // User code goes here!
     public static void FriendList(ProfNetwork esql) {
-
-
       return;
     }
 
