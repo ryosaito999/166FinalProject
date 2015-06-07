@@ -285,7 +285,12 @@ public class ProfNetwork {
                    case 2: UpdateProfile(esql); break;
                    case 3: NewMessage(esql); break;
                    case 4: SendRequest(esql); break;
-                   case 9: usermenu = false; break;
+                   case 5: changePass(esql); break;
+                   case 6: lookUpUser(esql); break;
+                   case 7: ViewFriends(esql); break;
+                   case 8: GotToFriend(esql); break;
+                   case 9: SendMsg(esql); break;
+                   case 10: usermenu = false; break;
                    default : System.out.println("Unrecognized choice!"); break;
                 }
               }
@@ -405,6 +410,25 @@ public class ProfNetwork {
     public static void SendRequest(ProfNetwork esql){
       return;
     }
+
+    public static void changePass(ProfNetwork esql){
+      return;
+    }
+
+    public static void lookUpUser(ProfNetwork esql){
+      return;
+    }
+
+    public static void ViewFriends(esql){
+      return;
+    }
+    public static void GotToFriend(esql){
+      return;
+    }
+    public static void SendMsg(esql){
+      return;
+    }
+
 
 
 
