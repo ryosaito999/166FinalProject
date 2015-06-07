@@ -1,47 +1,29 @@
 
-COPY USR(
-	userId,
-	password,
-	email,
-	name,
-	dateOfBirth)
+COPY USR
 FROM '/home/csmajs/rsait001/final166/data/usr.csv'
-WITH DELIMITER ';';
+WITH DELIMITER ';'
+CSV HEADER;
 
-COPY WORK_EXPR(
-	userId,
-	company,
-	role,	
-	location,
-	startDate,
-	endDate)
+COPY WORK_EXPR
 FROM '/home/csmajs/rsait001/final166/data/work_ex.csv'
-WITH DELIMITER ';';
+WITH DELIMITER ';'
+CSV HEADER;
 
-COPY EDUCATIONAL_DETAILS(
-	userId,
-	instituitionName,
-	major,
-	degree,
-	startDate,
-	endDate)
+
+COPY EDUCATIONAL_DETAILS
 FROM '/home/csmajs/rsait001/final166/data/edu_det.csv'
-WITH DELIMITER ';';
+WITH DELIMITER ';'
+CSV HEADER;
 
-COPY CONNECTION_USR(
-        userId,
-        connectionId,
-        status)
+
+COPY CONNECTION_USR
 FROM '/home/csmajs/rsait001/final166/data/connection.csv'
-WITH DELIMITER ';';
+WITH DELIMITER ';'
+CSV HEADER;
 
-COPY MESSAGE(
-        msgId,
-        senderId,
-        receiverId,
-        contents, 
-        sendTime,
-        deleteStatus,
-        status)
+
+COPY MESSAGE
 FROM '/home/csmajs/rsait001/final166/data/msg.csv'
-WITH DELIMITER ',';
+WITH DELIMITER ','
+CSV HEADER;
+
