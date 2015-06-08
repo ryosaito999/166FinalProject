@@ -486,7 +486,7 @@ public class ProfNetwork {
     }
 
     public displayProfile(ProfNetwork esql, String username){
-      String query = String.format("SELECT email, name, dateOfBirth FROM USR WHERE userId='%s' );
+      String query = String.format("SELECT email, name, dateOfBirth FROM USR WHERE userId='%s'", username );
       List<List<String> > usrInfo = new ArrayList<List<String> >();
 
 
