@@ -24,6 +24,8 @@ import java.io.InputStreamReader;
 import java.util.List;
 import java.util.ArrayList;
 import java.sql.Date;
+import java.util.*;
+
 
 /**
  * This class defines a simple embedded SQL utility class that is designed to
@@ -288,7 +290,7 @@ public class ProfNetwork {
                    case 1: FriendList(esql, authorisedUser); break;
                    case 2: UpdateProfile(esql, authorisedUser); break;
                    case 3: NewMessage(esql); break;
-                   case 4: SendRequest(esql); break;
+		case 4: SendRequest(esql, authorisedUser); break;
                    case 5: lookUpUser(esql); break;
 		               case 6: ViewFriends(esql); break;
                    case 7: GotToFriend(esql); break;
@@ -632,8 +634,23 @@ public class ProfNetwork {
 
     }
     
-    public static void SendRequest(ProfNetwork esql){
-      return;
+    public static void SendRequest(ProfNetwork esql, String authorisedUser){
+	try {
+	    String requester = authorisedUser;
+	    String query = String.format("Select C.connectionId FROM CONNECTION_USR C WHERE userId='%s'", requester);
+	    List<List<String>> result = esql.executeQueryAndReturnResult(query);
+	    //ListIterator<List<String>> iteri = result.listIterator();
+	    //	    ListIterator<String> iterj = iteri.next();
+	    //ListIterator<String> iter = result.get(0).iterator();
+	    /*	    for (ListIterator<String> iterj = iteri.next(); iterj.hasNext(); ) {
+		String user = iter.next();
+		}*/
+	    //List<List<String>> executeQueryAndReturnResult (String query)
+	}
+	catch (Exception e) {
+	    System.err.println (e.getMessage());
+	}
+	return;
     }
 
     public static void changePass(ProfNetwork esql){
