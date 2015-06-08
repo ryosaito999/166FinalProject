@@ -272,6 +272,7 @@ public class ProfNetwork {
               while(usermenu) {
                 System.out.println("MAIN MENU");
                 System.out.println("---------");
+                System.out.println("0. View Profile");
                 System.out.println("1. Goto Friend List");
                 System.out.println("2. Update Profile");
                 System.out.println("3. Write a new message");
@@ -284,7 +285,8 @@ public class ProfNetwork {
                 System.out.println("10. Log out");
 
 
-                switch (readChoice()){                   
+                switch (readChoice()){
+                   case 0: displayProfile(esql, authorisedUser);   break;                
                    case 1: FriendList(esql, authorisedUser); break;
                    case 2: UpdateProfile(esql, authorisedUser); break;
                    case 3: NewMessage(esql); break;
@@ -360,11 +362,16 @@ public class ProfNetwork {
          String password = in.readLine();
          System.out.print("\tEnter user email: ");
          String email = in.readLine();
+         System.out.print("\tEnter your full name: ");
+         String name = in.readLine();
 
-	 //Creating empty contact\block lists for a user
-	 String query = String.format("INSERT INTO USR (userId, password, email) VALUES ('%s','%s','%s')", login, password, email);
 
+      	 //Creating empty contact\block lists for a user
+      	 String query = String.format("INSERT INTO USR (userId, password, email, name) VALUES ('%s','%s','%s','%s')", login, password, email, name);
          esql.executeUpdate(query);
+
+
+
          System.out.println ("User successfully created!");
       }catch(Exception e){
          System.err.println (e.getMessage ());
@@ -409,82 +416,135 @@ public class ProfNetwork {
   	return;
     }
 
-    private static void updateEmail(ProfNetwork esql, String username ){
+    private static void updateField(ProfNetwork esql, String username , String field){
 
       try{
 
-        System.out.println("Enter your new email: ");
+        System.out.println("Enter your new " + field + ": ");
         String newMail = in.readLine();
 
-        String query = String.format("UPDATE USR SET email = '%s' WHERE userId = '%s'", newMail, username);
+        String query = String.format("UPDATE USR SET " + field + " = '%s' WHERE userId = '%s'", newMail, username);
         int userNum = esql.executeQuery(query);
 
         if( userNum  > 0){
-          System.out.println("Your new email is: " + newMail);
+          System.out.println("Your new " + field +  " is: " + newMail);
         }
 
         else{
-          System.out.println("Your email is incorrect: " + newMail);          
+          System.out.println("Something went wrong!");          
         }
 
         return;
          }catch (Exception e) {
-        System.err.println (e.getMessage ());
+        //System.err.println (e.getMessage ());
        }
     }
 
-    private static void updateWork(ProfNetwork esql, String username ){
+    private static void updateGeneralUser(ProfNetwork esql, String username ){
 
         try {
         System.out.println("What would you like to change?");
         System.out.println("---------");
         System.out.println("1. Email");
-        System.out.println("2. Work Experience");
-        System.out.println("3. Educational Details");
+        System.out.println("2. Full Name");
+        System.out.println("3. Date of Birth");
         System.out.println("4. Menu");
-        
-        return;
-         }catch (Exception e) {
+       
+       
+
+      switch (readChoice()){                   
+         case 1: updateField(esql, username, "email"); break;
+         case 2: updateField(esql, username, "name"); break;
+         case 3: updateField(esql, username, "birthday"); break;
+         case 4: return;
+         default : System.out.println("Unrecognized choice!"); break;
+         }
+       }catch (Exception e) {
         System.err.println (e.getMessage ());
-       }
+      }
+}
+
+
+    private static void updateWork(ProfNetwork esql, String username ){
+
+        try {
+        System.out.println("\nWhat would you like to change?");
+        System.out.println("---------");
+        System.out.println("1. Company");
+        System.out.println("2. Role");
+        System.out.println("3. Location");
+        System.out.println("4. Start Date");
+        System.out.println("5. End Date");
+        System.out.println("6. Menu");
+
+        
+
+      switch (readChoice()){                   
+         case 1: updateField(esql, username, "company"); break;
+         case 2: updateField(esql, username, "role"); break;
+         case 3: updateField(esql, username, "location"); break;
+         case 4: updateField(esql, username, "startDate"); break;
+         case 5: updateField(esql, username, "endDate"); break;
+         case 6: return;
+
+         default : System.out.println("Unrecognized choice!"); break;
+         }
+       }catch (Exception e) {
+        System.err.println (e.getMessage ());
+      }
+
     }
 
     private static void updateEdu(ProfNetwork esql, String username ){
 
-        try{
-        System.out.println("What would you like to change?");
+         try {
+        System.out.println("\nWhat would you like to change?");
         System.out.println("---------");
-        System.out.println("1. Email");
-        System.out.println("2. Work Experience");
-        System.out.println("3. Educational Details");
-        System.out.println("4. Menu");
+        System.out.println("1. institution");
+        System.out.println("2. major");
+        System.out.println("3. degree");
+        System.out.println("4. Start Date");
+        System.out.println("5. End Date");
+        System.out.println("6. Menu");
+
         
-        return;
-             }catch (Exception e) {
+
+      switch (readChoice()){                   
+         case 1: updateField(esql, username, "instituitionName"); break;
+         case 2: updateField(esql, username, "major"); break;
+         case 3: updateField(esql, username, "degree"); break;
+         case 4: updateField(esql, username, "startdate"); break;
+         case 5: updateField(esql, username, "enddate"); break;
+         case 6: return;
+
+         default : System.out.println("Unrecognized choice!"); break;
+         }
+       }catch (Exception e) {
         System.err.println (e.getMessage ());
-       }
+      }
+
     }
 
 
 
     public static void UpdateProfile( ProfNetwork esql, String username){
         try{
-
-        System.out.println("What would you like to change?");
-        System.out.println("---------");
-        System.out.println("1. Email");
-        System.out.println("2. Work Experience");
-        System.out.println("3. Educational Details");
-        System.out.println("4. Menu");
-        
         while(true){
-          switch (readChoice()){                   
-             case 1: updateEmail(esql, username); break;
-             case 2: updateWork(esql, username); break;
-             case 3: updateEdu(esql, username); break;
-             case 4: return;
-             default : System.out.println("Unrecognized choice!"); break;
-           }
+
+          System.out.println("\nWhat would you like to change?");
+          System.out.println("---------");
+          System.out.println("1. User Information");
+          System.out.println("2. Work Experience");
+          System.out.println("3. Educational Details");
+          System.out.println("4. Menu");
+          
+            switch (readChoice()){                   
+               case 1: updateGeneralUser(esql, username); break;
+               case 2: updateWork(esql, username); break;
+               case 3: updateEdu(esql, username); break;
+               case 4: return;
+               default : System.out.println("Unrecognized choice!"); break;
+             }
          }
 
 
@@ -547,27 +607,47 @@ public class ProfNetwork {
       }
   }
 
+    public static List<List<String> > replaceNulls( List<List<String> > usrArray ){
+
+      List<List<String> > newArr = new ArrayList<List<String> >();
+      newArr = usrArray;
+      for(int i = 0; i  < newArr.get(0).size();  i++) {
+             
+             if ( newArr.get(0).get(i) =="" ){
+                newArr.get(0).set(i, "None")  ;
+             }
+
+      }
+
+    return newArr;
+    }
+
 
     public static void displayProfile(ProfNetwork esql, String username){
       try{
-      String query = String.format("SELECT email, name FROM USR WHERE userId='%s'", username );  
+      String query = String.format("SELECT email, name, dateOfBirth  FROM USR WHERE userId='%s'", username );  
       List<List<String> > usrArray = new ArrayList<List<String> >();
       usrArray = esql.executeQueryAndReturnResult(query);
+      //replaceNulls(usrArray);
+      String email = usrArray.get(0).get(0);
+      String usr = usrArray.get(0).get(1);
+      String date = usrArray.get(0).get(2);
 
-
-      String usr = usrArray.get(0).get(1).replaceAll("\\s","");
-      String email = usrArray.get(0).get(0).replaceAll("\\s","");
 
       System.out.println( usr + "'s profie:");
       System.out.println("========================="  + "\n");
 
       System.out.println("Email: " + email + "\n");
+      System.out.println("Birthday: " + date + "\n");
+
 
       System.out.println("Work Info:");
       System.out.println("========================="  + "\n");
       
       query = String.format("SELECT * FROM WORK_EXPR WHERE userId='%s'", username );  
       usrArray = esql.executeQueryAndReturnResult(query);
+      replaceNulls(usrArray);
+
 
       String company  = usrArray.get(0).get(1);
       String role = usrArray.get(0).get(2);
@@ -583,6 +663,8 @@ public class ProfNetwork {
 
       query = String.format("SELECT * FROM EDUCATIONAL_DETAILS WHERE userId='%s'", username );  
       usrArray = esql.executeQueryAndReturnResult(query);
+      replaceNulls(usrArray);
+
 
       String institute  = usrArray.get(0).get(1);
       String major = usrArray.get(0).get(2);
@@ -609,8 +691,8 @@ public class ProfNetwork {
       return;
 
       }catch(Exception e){
-          System.err.println (e.getMessage ());
-         return ;
+          //System.err.println (e.getMessage ());
+         //return ;
        }
     } 
     public static void ViewFriends(ProfNetwork esql){
