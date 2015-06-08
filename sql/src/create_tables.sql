@@ -6,7 +6,7 @@ DROP TABLE USR;
 
 
 CREATE TABLE USR(
-	userId varchar(50) UNIQUE NOT NULL, 
+	userId char(50) UNIQUE NOT NULL, 
 	password varchar(50) NOT NULL,
 	email char(40) NOT NULL,
 	name char(50),
