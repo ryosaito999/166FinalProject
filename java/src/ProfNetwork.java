@@ -23,6 +23,7 @@ import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.util.List;
 import java.util.ArrayList;
+import java.sql.Date;
 
 /**
  * This class defines a simple embedded SQL utility class that is designed to
@@ -478,10 +479,10 @@ public class ProfNetwork {
         System.out.println("Searching....\n");
 
         String query = String.format("SELECT * FROM USR WHERE userId = '%s'", requestedUser);
-        int userNum = esql.executeQueryAndPrintResult(query);
+        int userNum = esql.executeQuery(query);
 
         if (userNum > 0) {
-          return;
+          displayProfile(esql, requestedUser);
         }
 
         else{
@@ -499,13 +500,87 @@ public class ProfNetwork {
     public static void displayProfile(ProfNetwork esql, String username){
       try{
       
+
       String query = String.format("SELECT email, name FROM USR WHERE userId='%s'", username );  
       List<List<String> > usrArray = new ArrayList<List<String> >();
       usrArray = esql.executeQueryAndReturnResult(query);
 
-      System.out.println("\n");
-      System.out.println(usrArray.get(0).get(1) + "'s PROFILE:");
-      System.out.println("---------");
+
+      String usr = usrArray.get(0).get(1).replaceAll("\\s","");
+      String email = usrArray.get(0).get(0).replaceAll("\\s","");
+
+      System.out.println( usr + "'s profie:");
+      System.out.println("========================="  + "\n");
+
+      System.out.println("Email: " + email + "\n");
+
+      System.out.println("Work Info:");
+      System.out.println("========================="  + "\n");
+      
+      query = String.format("SELECT * FROM WORK_EXPR WHERE userId='%s'", username );  
+      usrArray = esql.executeQueryAndReturnResult(query);
+
+      String company  = usrArray.get(0).get(1);
+      String role = usrArray.get(0).get(2);
+      String location = usrArray.get(0).get(3);
+      String start = usrArray.get(0).get(4);
+      String end = usrArray.get(0).get(5);
+
+      System.out.println( "Current company: " + company);
+      System.out.println("Role: " + role);
+      System.out.println("Location: " + location);
+      System.out.println("Start Date: " + start);
+      System.out.println("End Date: " + end + "\n");
+
+      query = String.format("SELECT * FROM EDUCATIONAL_DETAILS WHERE userId='%s'", username );  
+      usrArray = esql.executeQueryAndReturnResult(query);
+
+      String institute  = usrArray.get(0).get(1);
+      String major = usrArray.get(0).get(2);
+      String degree = usrArray.get(0).get(3);
+      String startEdu = usrArray.get(0).get(4);
+      String endEdu = usrArray.get(0).get(5);
+
+
+
+      System.out.println("Educational Details:");
+      System.out.println("========================="  + "\n");
+
+      System.out.println( "Institute: " + institute);
+      System.out.println("Major: " + major);
+      System.out.println("Degree: " + degree);
+      System.out.println("Start Date: " + startEdu);
+      System.out.println("End Date: " + endEdu + "\n");
+
+
+
+
+
+
+
+       query = String.format("SELECT *  FROM CONNECTION_USR" );      
+     int connect = esql.executeQueryAndPrintResult(query);
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
       return;
 
       }catch(Exception e){
