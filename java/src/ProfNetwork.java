@@ -460,11 +460,40 @@ public class ProfNetwork {
     }
 
     public static void lookUpUser(ProfNetwork esql){
-      return;
+      
+
+      try{
+        System.out.println("Enter the name of the user you would like to find: ");
+        String requestedUser = in.readLine();
+        System.out.println("Searching....\n");
+
+        String query = String.format("SELECT * FROM USR WHERE userId = '%s'", requestedUser);
+        int userNum = esql.executeQueryAndPrintResult(query);
+
+        if userNum > 0{
+          return;
+        }
+
+        else{
+          System.out.println("User does not exist.\n");
+          return
+        }
+
+      }catch(Exception e){
+         System.err.println (e.getMessage ());
+         return ;
+      }
+    }
+
+    public displayProfile(ProfNetwork esql, String username){
+      String query = String.format("SELECT email, name, dateOfBirth FROM USR WHERE userId='%s' );
+      List<List<String> > usrInfo = new ArrayList<List<String> >();
+
+
     }
 
     public static void ViewFriends(ProfNetwork esql){
-      return;
+        return;
     }
     public static void GotToFriend(ProfNetwork esql){
       return;
