@@ -274,10 +274,11 @@ public class ProfNetwork {
                 System.out.println("2. Update Profile");
                 System.out.println("3. Write a new message");
                 System.out.println("4. Send Friend Request");
-                System.out.println("6. Search Users");
-                System.out.println("7. View all Friends");
-                System.out.println("8. Goto a friend's profile");
-                System.out.println("9. Send a message");
+                System.out.println("5. Search Users");
+                System.out.println("6. View all Friends");
+                System.out.println("7. Goto a friend's profile");
+                System.out.println("8. Send a message");
+                System.out.println("9. Change password");
                 System.out.println("10. Log out");
 
 
@@ -286,10 +287,11 @@ public class ProfNetwork {
                    case 2: UpdateProfile(esql, authorisedUser); break;
                    case 3: NewMessage(esql); break;
                    case 4: SendRequest(esql); break;
-                   case 6: lookUpUser(esql); break;
-		               case 7: ViewFriends(esql); break;
-                   case 8: GotToFriend(esql); break;
-                   case 9: SendMsg(esql); break;
+                   case 5: lookUpUser(esql); break;
+		               case 6: ViewFriends(esql); break;
+                   case 7: GotToFriend(esql); break;
+                   case 8: SendMsg(esql); break;
+                   case 9: changePass(esql, authorisedUser); break;                   
                    case 10: usermenu = false; break;
                    default : System.out.println("Unrecognized choice!"); break;
                 }
@@ -395,64 +397,98 @@ public class ProfNetwork {
 
    /* Functions we need to implement */
    // User code goes here!
-  public static void FriendList(ProfNetwork esql, String authorisedUser) {
-	try{
-	    String query = String.format("SELECT C.connectionId FROM CONNECTION_USER C WHERE C.userId = '%s'", authorisedUser);
-	    esql.executeQueryAndPrintResult(query);
-	} catch (Exception e) {
-	    System.err.println (e.getMessage ());
-	}
-	return;
+    public static void FriendList(ProfNetwork esql, String authorisedUser) {
+  	try{
+  	    String query = String.format("SELECT C.connectionId FROM CONNECTION_USR C WHERE C.userId = '%s'", authorisedUser);
+  	    esql.executeQueryAndPrintResult(query);
+  	} catch (Exception e) {
+  	    System.err.println (e.getMessage ());
+  	}
+  	return;
     }
 
-    public static void UpdateProfile( ProfNetwork esql, String username){
+    private static void updateEmail(ProfNetwork esql, String username ){
 
-
-      String pwd;
-      String newPwd;
-      String newPwd2;
       try{
-          System.out.println("Enter y to change your password. Enter any other key to return to menu: ");
-          String confirm = in.readLine();
+
+        System.out.println("Enter your old email: ");
+        String oldMail = in.readLine();
+
+        System.out.println("Enter your new email: ");
+        String newMail = in.readLine();
+
+        String query = String.format("UPDATE USR SET email = '%s' WHERE userId = '%s' AND email= '%s'", newMail, username, oldMail);
+        int userNum = esql.executeQuery(query);
 
 
-          if(!confirm.equals("y") ){
-            return;
-          }
-          else{
-            
-              System.out.println("Enter your current password: ");
-              pwd = in.readLine();
+        return;
+         }catch (Exception e) {
+        System.err.println (e.getMessage ());
+       }
+    }
 
-              String query = String.format("SELECT * FROM USR WHERE userId = '%s' AND password = '%s'", username, pwd);
-              int userNum = esql.executeQuery(query);
+    private static void updateWork(ProfNetwork esql, String username ){
 
-              if( userNum <= 0){
-                System.out.println("\tIncorrect password!");
-                return;
-              }
+        try {
+        System.out.println("What would you like to change?");
+        System.out.println("---------");
+        System.out.println("1. Email");
+        System.out.println("2. Work Experience");
+        System.out.println("3. Educational Details");
+        System.out.println("4. Menu");
+        
+        return;
+         }catch (Exception e) {
+        System.err.println (e.getMessage ());
+       }
+    }
 
-              else{
+    private static void updateEdu(ProfNetwork esql, String username ){
 
-                  System.out.println("Enter your new password ");
-                  newPwd = in.readLine();
-                  System.out.println("ReEnter your new password: ");
-                  newPwd2 = in.readLine();
+        try{
+        System.out.println("What would you like to change?");
+        System.out.println("---------");
+        System.out.println("1. Email");
+        System.out.println("2. Work Experience");
+        System.out.println("3. Educational Details");
+        System.out.println("4. Menu");
+        
+        return;
+             }catch (Exception e) {
+        System.err.println (e.getMessage ());
+       }
+    }
 
-                  if( newPwd.equals(newPwd2)){
-                      System.out.println(newPwd2);
-                      query = String.format("UPDATE USR SET password = '%s' WHERE userId = '%s' ", pwd, username);
-                      userNum = esql.executeQuery(query);
-                      if(userNum > 0){
-                        System.out.println("\tpassword changed!");
-                      }
-                  }
-              }
-          }
-      }catch(Exception e){
-         System.err.println (e.getMessage ());
-         return ;
-      }
+
+
+    public static void UpdateProfile( ProfNetwork esql, String username){
+        try{
+        displayProfile( esql, username);
+
+        System.out.println("What would you like to change?");
+        System.out.println("---------");
+        System.out.println("1. Email");
+        System.out.println("2. Work Experience");
+        System.out.println("3. Educational Details");
+        System.out.println("4. Menu");
+        
+        while(true){
+          switch (readChoice()){                   
+             case 1: updateEmail(esql, username); break;
+             case 2: updateWork(esql, username); break;
+             case 3: updateEdu(esql, username); break;
+             case 4: return;
+             default : System.out.println("Unrecognized choice!"); break;
+           }
+         }
+
+
+
+
+        }catch (Exception e) {
+        System.err.println (e.getMessage ());
+       }
+
    } 
     
     public static void NewMessage(ProfNetwork esql){
@@ -468,7 +504,6 @@ public class ProfNetwork {
     }
 
     public static void lookUpUser(ProfNetwork esql){
-      
       try{
         System.out.println("Enter the name of the user you would like to find: ");
         String requestedUser = in.readLine();
@@ -495,8 +530,6 @@ public class ProfNetwork {
 
     public static void displayProfile(ProfNetwork esql, String username){
       try{
-      
-
       String query = String.format("SELECT email, name FROM USR WHERE userId='%s'", username );  
       List<List<String> > usrArray = new ArrayList<List<String> >();
       usrArray = esql.executeQueryAndReturnResult(query);
@@ -549,32 +582,8 @@ public class ProfNetwork {
       System.out.println("End Date: " + endEdu + "\n");
 
 
-
-
-
-
-
-       query = String.format("SELECT *  FROM CONNECTION_USR" );      
-     int connect = esql.executeQueryAndPrintResult(query);
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+      System.out.println("Friends:");
+      System.out.println("========================="  + "\n");
 
 
       return;
@@ -593,6 +602,55 @@ public class ProfNetwork {
     }
     public static void SendMsg(ProfNetwork esql){
       return;
+    }
+
+    public static void changePass(ProfNetwork esql, String username){
+
+      String pwd;
+      String newPwd;
+      String newPwd2;
+      try{
+          System.out.println("Enter y to change your password. Enter any other key to return to menu: ");
+          String confirm = in.readLine();
+
+
+          if(!confirm.equals("y") ){
+            return;
+          }
+          else{
+            
+              System.out.println("Enter your current password: ");
+              pwd = in.readLine();
+
+              String query = String.format("SELECT * FROM USR WHERE userId = '%s' AND password = '%s'", username, pwd);
+              int userNum = esql.executeQuery(query);
+
+              if( userNum <= 0){
+                System.out.println("\tIncorrect password!");
+                return;
+              }
+
+              else{
+
+                  System.out.println("Enter your new password ");
+                  newPwd = in.readLine();
+                  System.out.println("ReEnter your new password: ");
+                  newPwd2 = in.readLine();
+
+                  if( newPwd.equals(newPwd2)){
+                      System.out.println(newPwd2);
+                      query = String.format("UPDATE USR SET password = '%s' WHERE userId = '%s' ", pwd, username);
+                      userNum = esql.executeQuery(query);
+                      if(userNum > 0){
+                        System.out.println("\tpassword changed!");
+                      }
+                  }
+              }
+          }
+      }catch(Exception e){
+         System.err.println (e.getMessage ());
+         return ;
+      }
     }
 
 
