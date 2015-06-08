@@ -1,29 +1,29 @@
-
+	
 COPY USR
-FROM '/home/csmajs/rsait001/final166/data/usr.csv'
+FROM '/home/csmajs/rlaw001/166FinalProject/data/usr.csv'
 WITH DELIMITER ';'
 CSV HEADER;
 
 COPY WORK_EXPR
-FROM '/home/csmajs/rsait001/final166/data/work_ex.csv'
+FROM '/home/csmajs/rlaw001/166FinalProject/data/work_ex.csv'
 WITH DELIMITER ';'
 CSV HEADER;
 
 
 COPY EDUCATIONAL_DETAILS
-FROM '/home/csmajs/rsait001/final166/data/edu_det.csv'
+FROM '/home/csmajs/rlaw001/166FinalProject/data/edu_det.csv'
 WITH DELIMITER ';'
 CSV HEADER;
 
 
 COPY CONNECTION_USR
-FROM '/home/csmajs/rsait001/final166/data/connection.csv'
+FROM '/home/csmajs/rlaw001/166FinalProject/data/connection.csv'
 WITH DELIMITER ';'
 CSV HEADER;
 
 
 COPY MESSAGE
-FROM '/home/csmajs/rsait001/final166/data/msg.csv'
+FROM '/home/csmajs/rlaw001/166FinalProject/data/msg.csv'
 WITH DELIMITER ','
 CSV HEADER;
 
