@@ -461,7 +461,6 @@ public class ProfNetwork {
 
     public static void lookUpUser(ProfNetwork esql){
       
-
       try{
         System.out.println("Enter the name of the user you would like to find: ");
         String requestedUser = in.readLine();
@@ -470,26 +469,28 @@ public class ProfNetwork {
         String query = String.format("SELECT * FROM USR WHERE userId = '%s'", requestedUser);
         int userNum = esql.executeQueryAndPrintResult(query);
 
-        if userNum > 0{
+        if (userNum > 0) {
           return;
         }
 
         else{
           System.out.println("User does not exist.\n");
-          return
+          return;
         }
 
       }catch(Exception e){
          System.err.println (e.getMessage ());
          return ;
       }
-    }
+  }
 
-    public displayProfile(ProfNetwork esql, String username){
-      String query = String.format("SELECT email, name, dateOfBirth FROM USR WHERE userId='%s'", username );
-      List<List<String> > usrArray = new ArrayList<List<String> >();
-      
-      usrArray = 
+    public static void displayProfile(ProfNetwork esql, String username){
+      String query = String.format("SELECT email, name FROM USR WHERE userId='%s'", username );    
+      usrArray = executeQueryAndReturnResult(query);
+
+       System.out.println("\n");
+       System.out.println(usrArray.get(0).get(1) + "'s PROFILE:");
+       System.out.println("---------");
 
 
     }
