@@ -639,6 +639,39 @@ public class ProfNetwork {
 	    String requester = authorisedUser;
 	    String query = String.format("Select C.connectionId FROM CONNECTION_USR C WHERE userId='%s'", requester);
 	    List<List<String>> result = esql.executeQueryAndReturnResult(query);
+	    
+	    List<String> tier1_friends = new ArrayList<String>();
+	    List<String> tier2_friends = new ArrayList<String>();
+	    List<String> tier3_friends = new ArrayList<String>();
+	    System.out.println("1st connection friends: ");
+	    //Add Tier1 Friends
+	    for (int i=0; i<result.size(); i++) {
+		tier1_friends.add(result.get(i).get(0));
+		System.out.println(result.get(i).get(0));
+	    }
+	    //Add Tier2 Friends
+	    System.out.println("2nd connection friends: ");
+	    for (int i=0; i<tier1_friends.size(); i++) {
+		requester = tier1_friends.get(i);
+		query = String.format("Select C.connectionId FROM CONNECTION_USR C WHERE userId='%s'", requester);
+		result = esql.executeQueryAndReturnResult(query);
+		for (int j=0; j<result.size(); j++) {
+		    tier2_friends.add(result.get(j).get(0));
+		    System.out.println(result.get(j).get(0));
+		}
+	    }
+	    //Add Tier3 Friends
+	    System.out.println("3rd connection friends: ");
+	    for (int i=0; i<tier2_friends.size(); i++) {
+		requester = tier2_friends.get(i);
+		query = String.format("Select C.connectionId FROM CONNECTION_USR C WHERE userId='%s'", requester);
+		result = esql.executeQueryAndReturnResult(query);
+		for (int j=0; j<result.size(); j++) {
+		    tier3_friends.add(result.get(j).get(0));
+		    System.out.println(result.get(j).get(0));
+		}
+	    }
+	    
 	    //ListIterator<List<String>> iteri = result.listIterator();
 	    //	    ListIterator<String> iterj = iteri.next();
 	    //ListIterator<String> iter = result.get(0).iterator();
@@ -651,10 +684,6 @@ public class ProfNetwork {
 	    System.err.println (e.getMessage());
 	}
 	return;
-    }
-
-    public static void changePass(ProfNetwork esql){
-      return;
     }
 
     public static void lookUpUser(ProfNetwork esql){
