@@ -39,7 +39,7 @@ public class ProfNetwork {
    static BufferedReader in = new BufferedReader(
                                 new InputStreamReader(System.in));
 
-   /**
+   /**2. Update Profile
     * Creates a new instance of ProfNetwork
     *
     * @param hostname the MySQL or PostgreSQL server hostname
@@ -396,8 +396,12 @@ public class ProfNetwork {
    // User code goes here!
   public static void FriendList(ProfNetwork esql, String authorisedUser) {
 	try{
-	    String query = String.format("SELECT C.connectionId FROM CONNECTION_USER C WHERE C.userId = '%s'", authorisedUser);
-	    esql.executeQueryAndPrintResult(query);
+	    String query = String.format("SELECT * FROM CONNECTION_USR");
+	    //String query = String.format("SELECT C.connectionId FROM CONNECTION_USR C WHERE C.userId = '%s'", authorisedUser);
+	    System.out.println(query);
+	    //	    int num_results = esql.executeQueryAndPrintResult(query);
+	    int num_results = esql.executeQuery(query);
+	    System.out.println("Results found: " + num_results);
 	} catch (Exception e) {
 	    System.err.println (e.getMessage ());
 	}
