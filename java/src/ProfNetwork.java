@@ -248,6 +248,7 @@ public class ProfNetwork {
          String user = args[2];
          esql = new ProfNetwork (dbname, dbport, user, "");
 
+
          boolean keepon = true;
          while(keepon) {
             // These are sample SQL statements
@@ -280,12 +281,17 @@ public class ProfNetwork {
 
 
                 switch (readChoice()){
+<<<<<<< HEAD
+		case 1: FriendList(esql, authorisedUser); break;
+                   case 2: UpdateProfile(esql); break;
+=======
                    case 1: FriendList(esql); break;
                    case 2: UpdateProfile(esql, authorisedUser); break;
+>>>>>>> f8a862b93fcd1735032c69078b29e90aff68f46e
                    case 3: NewMessage(esql); break;
                    case 4: SendRequest(esql); break;
                    case 6: lookUpUser(esql); break;
-                   case 7: ViewFriends(esql); break;
+		case 7: ViewFriends(esql); break;
                    case 8: GotToFriend(esql); break;
                    case 9: SendMsg(esql); break;
                    case 10: usermenu = false; break;
@@ -393,8 +399,14 @@ public class ProfNetwork {
 
    /* Functions we need to implement */
    // User code goes here!
-    public static void FriendList(ProfNetwork esql) {
-      return;
+    public static void FriendList(ProfNetwork esql, String authorisedUser) {
+	try{
+	    String query = String.format("SELECT C.connectionId FROM CONNECTION_USER C WHERE C.userId = '%s'", authorisedUser);
+	    executeQueryAndPrintResult(query);
+	} catch (Exception e) {
+	    System.err.println (e.getMessage ());
+	}
+	return;
     }
 
     public static void UpdateProfile( ProfNetwork esql, String username){
@@ -484,6 +496,7 @@ public class ProfNetwork {
       }
   }
 
+
     public static void displayProfile(ProfNetwork esql, String username){
       String query = String.format("SELECT email, name FROM USR WHERE userId='%s'", username );    
       usrArray = executeQueryAndReturnResult(query);
@@ -491,12 +504,12 @@ public class ProfNetwork {
        System.out.println("\n");
        System.out.println(usrArray.get(0).get(1) + "'s PROFILE:");
        System.out.println("---------");
+       return;
 
-
-    }
 
     public static void ViewFriends(ProfNetwork esql){
         return;
+
     }
     public static void GotToFriend(ProfNetwork esql){
       return;
