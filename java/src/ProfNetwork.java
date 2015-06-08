@@ -273,7 +273,6 @@ public class ProfNetwork {
                 System.out.println("2. Update Profile");
                 System.out.println("3. Write a new message");
                 System.out.println("4. Send Friend Request");
-                System.out.println("5. Change Password");
                 System.out.println("6. Search Users");
                 System.out.println("7. View all Friends");
                 System.out.println("8. Goto a friend's profile");
@@ -282,11 +281,15 @@ public class ProfNetwork {
 
 
                 switch (readChoice()){
+<<<<<<< HEAD
 		case 1: FriendList(esql, authorisedUser); break;
                    case 2: UpdateProfile(esql); break;
+=======
+                   case 1: FriendList(esql); break;
+                   case 2: UpdateProfile(esql, authorisedUser); break;
+>>>>>>> f8a862b93fcd1735032c69078b29e90aff68f46e
                    case 3: NewMessage(esql); break;
                    case 4: SendRequest(esql); break;
-                   case 5: changePass(esql); break;
                    case 6: lookUpUser(esql); break;
 		case 7: ViewFriends(esql); break;
                    case 8: GotToFriend(esql); break;
@@ -326,21 +329,24 @@ public class ProfNetwork {
     * Reads the users choice given from the keyboard
     * @int
     **/
-   public static int readChoice() {
-      int input;
-      // returns only if a correct value is given.
-      do {
-         System.out.print("Please make your choice: ");
-         try { // read the integer, parse it and break.
-            input = Integer.parseInt(in.readLine());
-            break;
-         }catch (Exception e) {
-            System.out.println("Your input is invalid!");
-            continue;
-         }//end try
-      }while (true);
-      return input;
-   }//end readChoice
+
+
+  public static int readChoice() {
+    int input;
+    // returns only if a correct value is given.
+    do {
+     System.out.print("Please make your choice: ");
+     try { // read the integer, parse it and break.
+      input = Integer.parseInt(in.readLine());
+      break;
+     }catch (Exception e) {
+      System.out.println("Your input is invalid!");
+      continue;
+     }//end try
+    }while (true);
+    return input;
+}//end readChoice
+
 
    /*
     * Creates a new user with privided login, passowrd and phoneNum
@@ -403,15 +409,58 @@ public class ProfNetwork {
 	return;
     }
 
+    public static void UpdateProfile( ProfNetwork esql, String username){
 
-    public static void UpdateProfile(ProfNetwork esql) {
 
-      return;
-    }
+      String pwd;
+      String newPwd;
+      String newPwd2;
+      try{
+          System.out.println("Enter y to change your password. Enter any other key to return to menu: ");
+          String confirm = in.readLine();
+
+
+          if(!confirm.equals("y") ){
+            return;
+          }
+          else{
+            
+              System.out.println("Enter your current password: ");
+              pwd = in.readLine();
+
+              String query = String.format("SELECT * FROM USR WHERE userId = '%s' AND password = '%s'", username, pwd);
+              int userNum = esql.executeQuery(query);
+
+              if( userNum <= 0){
+                System.out.println("\tIncorrect password!");
+                return;
+              }
+
+              else{
+
+                  System.out.println("Enter your new password ");
+                  newPwd = in.readLine();
+                  System.out.println("ReEnter your new password: ");
+                  newPwd2 = in.readLine();
+
+                  if( newPwd.equals(newPwd2)){
+                      System.out.println(newPwd2);
+                      query = String.format("UPDATE USR SET password = '%s' WHERE userId = '%s' ", pwd, username);
+                      userNum = esql.executeQuery(query);
+                      if(userNum > 0){
+                        System.out.println("\tpassword changed!");
+                      }
+                  }
+              }
+          }
+      }catch(Exception e){
+         System.err.println (e.getMessage ());
+         return ;
+      }
+   } 
     
     public static void NewMessage(ProfNetwork esql){
 
-      return;
     }
     
     public static void SendRequest(ProfNetwork esql){
@@ -423,11 +472,45 @@ public class ProfNetwork {
     }
 
     public static void lookUpUser(ProfNetwork esql){
+      
+
+      try{
+        System.out.println("Enter the name of the user you would like to find: ");
+        String requestedUser = in.readLine();
+        System.out.println("Searching....\n");
+
+        String query = String.format("SELECT * FROM USR WHERE userId = '%s'", requestedUser);
+        int userNum = esql.executeQueryAndPrintResult(query);
+
+        if userNum > 0{
+          return;
+        }
+
+        else{
+          System.out.println("User does not exist.\n");
+          return
+        }
+
+      }catch(Exception e){
+         System.err.println (e.getMessage ());
+         return ;
+      }
+    }
+
+<<<<<<< HEAD
+    public static void ViewFriends(ProfNetwork esql){
       return;
+=======
+    public displayProfile(ProfNetwork esql, String username){
+      String query = String.format("SELECT email, name, dateOfBirth FROM USR WHERE userId='%s'", username );
+      List<List<String> > usrInfo = new ArrayList<List<String> >();
+
+
     }
 
     public static void ViewFriends(ProfNetwork esql){
-      return;
+        return;
+>>>>>>> f8a862b93fcd1735032c69078b29e90aff68f46e
     }
     public static void GotToFriend(ProfNetwork esql){
       return;
