@@ -1,4 +1,4 @@
-	
+		
 COPY USR
 FROM '/home/csmajs/rlaw001/166FinalProject/data/usr.csv'
 WITH DELIMITER ';'
