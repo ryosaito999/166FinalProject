@@ -294,7 +294,7 @@ public class ProfNetwork {
                    case 5: lookUpUser(esql); break;
 		               case 6: ViewFriends(esql); break;
                    case 7: GotToFriend(esql); break;
-                   case 8: SendMsg(esql); break;
+                   case 8: SendMsg(esql, authorisedUser); break;
                    case 9: changePass(esql, authorisedUser); break;                   
                    case 10: usermenu = false; break;
                    default : System.out.println("Unrecognized choice!"); break;
@@ -620,10 +620,6 @@ public class ProfNetwork {
                default : System.out.println("Unrecognized choice!"); break;
              }
          }
-
-
-
-
         }catch (Exception e) {
         System.err.println (e.getMessage ());
        }
@@ -653,9 +649,6 @@ public class ProfNetwork {
 	return;
     }
 
-    public static void changePass(ProfNetwork esql){
-      return;
-    }
 
     public static void lookUpUser(ProfNetwork esql){
       try{
@@ -780,8 +773,15 @@ public class ProfNetwork {
     public static void GotToFriend(ProfNetwork esql){
       return;
     }
-    public static void SendMsg(ProfNetwork esql){
-      return;
+    public static void SendMsg(ProfNetwork esql, String username){
+      
+   try{
+      
+     }catch(Exception e){
+       System.err.println(e.getMessage() );
+       System.err.println("error in showallmessages");
+     }
+
     }
 
     public static void changePass(ProfNetwork esql, String username){
