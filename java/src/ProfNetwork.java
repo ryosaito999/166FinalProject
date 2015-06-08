@@ -40,7 +40,7 @@ public class ProfNetwork {
    static BufferedReader in = new BufferedReader(
                                 new InputStreamReader(System.in));
 
-   /**2. Update Profile
+   /**
     * Creates a new instance of ProfNetwork
     *
     * @param hostname the MySQL or PostgreSQL server hostname
@@ -397,7 +397,6 @@ public class ProfNetwork {
 
    /* Functions we need to implement */
    // User code goes here!
-<<<<<<< HEAD
     public static void FriendList(ProfNetwork esql, String authorisedUser) {
   	try{
   	    String query = String.format("SELECT C.connectionId FROM CONNECTION_USR C WHERE C.userId = '%s'", authorisedUser);
@@ -406,35 +405,25 @@ public class ProfNetwork {
   	    System.err.println (e.getMessage ());
   	}
   	return;
-=======
-  public static void FriendList(ProfNetwork esql, String authorisedUser) {
-	try{
-	    String query = String.format("SELECT * FROM CONNECTION_USR");
-	    //String query = String.format("SELECT C.connectionId FROM CONNECTION_USR C WHERE C.userId = '%s'", authorisedUser);
-	    System.out.println(query);
-	    //	    int num_results = esql.executeQueryAndPrintResult(query);
-	    int num_results = esql.executeQuery(query);
-	    System.out.println("Results found: " + num_results);
-	} catch (Exception e) {
-	    System.err.println (e.getMessage ());
-	}
-	return;
->>>>>>> 54639ee9276ea5daae8fd90404f7a25353350f32
     }
 
     private static void updateEmail(ProfNetwork esql, String username ){
 
       try{
 
-        System.out.println("Enter your old email: ");
-        String oldMail = in.readLine();
-
         System.out.println("Enter your new email: ");
         String newMail = in.readLine();
 
-        String query = String.format("UPDATE USR SET email = '%s' WHERE userId = '%s' AND email= '%s'", newMail, username, oldMail);
+        String query = String.format("UPDATE USR SET email = '%s' WHERE userId = '%s'", newMail, username);
         int userNum = esql.executeQuery(query);
 
+        if( userNum  > 0){
+          System.out.println("Your new email is: " + newMail);
+        }
+
+        else{
+          System.out.println("Your email is incorrect: " + newMail);          
+        }
 
         return;
          }catch (Exception e) {
@@ -478,7 +467,6 @@ public class ProfNetwork {
 
     public static void UpdateProfile( ProfNetwork esql, String username){
         try{
-        displayProfile( esql, username);
 
         System.out.println("What would you like to change?");
         System.out.println("---------");
