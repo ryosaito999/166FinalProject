@@ -294,7 +294,7 @@ public class ProfNetwork {
                    case 5: lookUpUser(esql); break;
 		               case 6: ViewFriends(esql); break;
                    case 7: GotToFriend(esql); break;
-                   case 8: SendMsg(esql); break;
+                   case 8: SendMsg(esql, authorisedUser); break;
                    case 9: changePass(esql, authorisedUser); break;                   
                    case 10: usermenu = false; break;
                    default : System.out.println("Unrecognized choice!"); break;
@@ -438,10 +438,10 @@ public class ProfNetwork {
       	 String query = String.format("INSERT INTO USR (userId, password, email, name, dateOfBirth) VALUES ('%s','%s','%s','%s', '%s')", login, password, email, name, bday);
          esql.executeUpdate(query);
 
-         query = String.format("INSERT INTO WORK_EXPR (company, role, location, startDate, endDate) VALUES ('%s','%s','%s','%s', '%s' , '%s')", login, company, role,  location, startdate, enddate);
+         query = String.format("INSERT INTO WORK_EXPR (userId, company, role, location, startDate, endDate) VALUES ('%s','%s','%s','%s', '%s' , '%s')", login, company, role,  location, startdate, enddate);
          esql.executeUpdate(query);
 
-         query = String.format("INSERT INTO EDUCATIONAL_DETAILS (instituitionName, major, degree, startdate, enddate) VALUES ('%s','%s','%s','%s', '%s', '%s' )",login, institue, major, degree ,startdateCollege, enddateGrad);
+         query = String.format("INSERT INTO EDUCATIONAL_DETAILS (userId , instituitionName, major, degree, startdate, enddate) VALUES ('%s','%s','%s','%s', '%s', '%s' )",login, institue, major, degree ,startdateCollege, enddateGrad);
          esql.executeUpdate(query);
 
          System.out.println ("User successfully created!");
@@ -620,10 +620,6 @@ public class ProfNetwork {
                default : System.out.println("Unrecognized choice!"); break;
              }
          }
-
-
-
-
         }catch (Exception e) {
         System.err.println (e.getMessage ());
        }
@@ -739,11 +735,8 @@ public class ProfNetwork {
       String usr = usrArray.get(0).get(1);
       String date = usrArray.get(0).get(2);
 
-      if (usr.equals("")){
-        usr = "None";
-      }
 
-      System.out.println( usr + "'s profie:");
+      System.out.println( usr.trim() + "'s profie:");
       System.out.println("========================="  + "\n");
 
       System.out.println("Email: " + email + "\n");
@@ -812,8 +805,15 @@ public class ProfNetwork {
     public static void GotToFriend(ProfNetwork esql){
       return;
     }
-    public static void SendMsg(ProfNetwork esql){
-      return;
+    public static void SendMsg(ProfNetwork esql, String username){
+      
+   try{
+      
+     }catch(Exception e){
+       System.err.println(e.getMessage() );
+       System.err.println("error in showallmessages");
+     }
+
     }
 
     public static void changePass(ProfNetwork esql, String username){
