@@ -6,8 +6,8 @@ DROP TABLE USR;
 
 
 CREATE TABLE USR(
-	userId char(50) UNIQUE NOT NULL, 
-	password char(50) NOT NULL,
+	userId varchar(50) UNIQUE NOT NULL, 
+	password varchar(50) NOT NULL,
 	email char(40) NOT NULL,
 	name char(50),
 	dateOfBirth date,
