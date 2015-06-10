@@ -764,83 +764,148 @@ public class ProfNetwork {
 	}
 
 
-
 	public static void SendRequest(ProfNetwork esql, String authorisedUser){
-
-		try {
-		String requester = authorisedUser;
+	    try {
+		String requester = authorisedUser.trim();
 		String query = String.format("Select C.connectionId FROM CONNECTION_USR C WHERE C.userId='%s' AND C.status='Accept' UNION Select C2.userId FROM CONNECTION_USR C2 WHERE C2.connectionId='%s' AND C2.status='Accept'", requester, requester);
 		List<List<String>> result = esql.executeQueryAndReturnResult(query);
-			
+		
 		List<String> tier1_friends = new ArrayList<String>();
 		List<String> tier2_friends = new ArrayList<String>();
 		List<String> tier3_friends = new ArrayList<String>();
+		List<String> all_users = new ArrayList<String>();
 		//System.out.println("1st connection friends: ");
 		//Add Tier1 Friends
 		for (int i=0; i<result.size(); i++) {
-		tier1_friends.add(result.get(i).get(0));
-		//System.out.println(result.get(i).get(0));
+		    tier1_friends.add(result.get(i).get(0).trim());
+		    //System.out.println(result.get(i).get(0));
 		}
 		//Add Tier2 Friends
 		//System.out.println("2nd connection friends: ");
 		for (int i=0; i<tier1_friends.size(); i++) {
-		requester = tier1_friends.get(i);
-		query = String.format("Select C.connectionId FROM CONNECTION_USR C WHERE C.userId='%s' AND C.status='Accept' UNION Select C2.userId FROM CONNECTION_USR C2 WHERE C2.connectionId='%s' AND C2.status='Accept'", requester, requester);
-		result = esql.executeQueryAndReturnResult(query);
-		for (int j=0; j<result.size(); j++) {
-			tier2_friends.add(result.get(j).get(0));
+		    requester = tier1_friends.get(i);
+		    query = String.format("Select C.connectionId FROM CONNECTION_USR C WHERE C.userId='%s' AND C.status='Accept' UNION Select C2.userId FROM CONNECTION_USR C2 WHERE C2.connectionId='%s' AND C2.status='Accept'", requester, requester);
+		    result = esql.executeQueryAndReturnResult(query);
+		    for (int j=0; j<result.size(); j++) {
+			tier2_friends.add(result.get(j).get(0).trim());
 			//System.out.println(result.get(j).get(0));
-		}
+		    }
 		}
 		//Add Tier3 Friends
 		//System.out.println("3rd connection friends: ");
 		for (int i=0; i<tier2_friends.size(); i++) {
-		requester = tier2_friends.get(i);
-		query = String.format("Select C.connectionId FROM CONNECTION_USR C WHERE C.userId='%s' AND C.status='Accept' UNION Select C2.userId FROM CONNECTION_USR C2 WHERE C2.connectionId='%s' AND C2.status='Accept'", requester, requester);
-		result = esql.executeQueryAndReturnResult(query);
-		for (int j=0; j<result.size(); j++) {
-			tier3_friends.add(result.get(j).get(0));
+		    requester = tier2_friends.get(i);
+		    query = String.format("Select C.connectionId FROM CONNECTION_USR C WHERE C.userId='%s' AND C.status='Accept' UNION Select C2.userId FROM CONNECTION_USR C2 WHERE C2.connectionId='%s' AND C2.status='Accept'", requester, requester);
+		    result = esql.executeQueryAndReturnResult(query);
+		    for (int j=0; j<result.size(); j++) {
+			tier3_friends.add(result.get(j).get(0).trim());
 			//System.out.println(result.get(j).get(0));
+		    }
 		}
+		requester = authorisedUser.trim();
+		//Make all users list
+		//System.out.println("All users list: ");
+		query = String.format("Select userId FROM USR");
+		result = esql.executeQueryAndReturnResult(query);
+		for (int i=0; i<result.size(); i++) {
+		    all_users.add(result.get(i).get(0).trim());
+		    //System.out.println(result.get(i).get(0));
 		}
-			
+		
+		
+		//Make valid connections list
 		boolean addanyoneflag = false;
 		List<String> valid_connections = new ArrayList<String>();
 		if (tier1_friends.size() < 5) { // up to 5 connections, can do anyone
-		addanyoneflag = true;
-		System.out.println("You have less than 5 friends. Add anyone you want!");
+		    addanyoneflag = true;
+		    System.out.println("You only have " + tier1_friends.size() + " friends.");
+		    System.out.println("You have less than 5 friends. Add anyone you want!");
 		}
 		else {
-		System.out.println("Valid users to add");
-		//System.out.println("CUR AUTHROISED USER IS: " + authorisedUser);
-		for (int i=0; i<tier2_friends.size(); i++) {
-			String tmpfriend = tier2_friends.get(i);
-			if (!tier1_friends.contains(tmpfriend) && !valid_connections.contains(tmpfriend) && !tmpfriend.trim().equals(authorisedUser.trim())) {
-			valid_connections.add(tmpfriend);
-			System.out.println(tmpfriend);
+		    System.out.println("Valid users to add");
+		    //System.out.println("CUR AUTHROISED USER IS: " + authorisedUser);
+		    for (int i=0; i<tier2_friends.size(); i++) {
+			String tmpfriend = tier2_friends.get(i).trim();
+			if (!tier1_friends.contains(tmpfriend) && !valid_connections.contains(tmpfriend) && !tmpfriend.trim().equals(requester)) {
+			    valid_connections.add(tmpfriend);
+			    System.out.println(tmpfriend);
 			}
-		}
-		for (int i=0; i<tier3_friends.size(); i++) {
-			String tmpfriend = tier3_friends.get(i);
-			if (!tier1_friends.contains(tmpfriend) && !valid_connections.contains(tmpfriend) && !tmpfriend.trim().equals(authorisedUser.trim())) {
-			valid_connections.add(tmpfriend);
-			System.out.println(tmpfriend);
+		    }
+		    for (int i=0; i<tier3_friends.size(); i++) {
+			String tmpfriend = tier3_friends.get(i).trim();
+			if (!tier1_friends.contains(tmpfriend) && !valid_connections.contains(tmpfriend) && !tmpfriend.trim().equals(requester)) {
+			    valid_connections.add(tmpfriend);
+			    System.out.println(tmpfriend);
 			}
+		    }
 		}
+		
+		//Pending Friends
+		List<List<String> > pfl_2d = new ArrayList<List<String> >();
+		List<String> pfl = new ArrayList<String>();
+		query = String.format("Select C.connectionId FROM CONNECTION_USR C WHERE C.userId='%s' AND C.status='Request' UNION Select C2.userId FROM CONNECTION_USR C2 WHERE C2.connectionId='%s' AND C2.status='Request'", requester, requester);
+		pfl_2d = esql.executeQueryAndReturnResult(query);
+		for ( int i = 0; i < pfl_2d.size(); ++i){
+		    pfl.add((pfl_2d.get(i).get(0)).trim());
+		    //System.out.println(pfl_2d.get(i).get(0));
 		}
-
+				
+		//Rejected Friends
+		List<List<String> > rfl_2d = new ArrayList<List<String> >();
+		List<String> rfl = new ArrayList<String>();
+		query = String.format("Select C.connectionId FROM CONNECTION_USR C WHERE C.userId='%s' AND C.status='Reject' UNION Select C2.userId FROM CONNECTION_USR C2 WHERE C2.connectionId='%s' AND C2.status='Reject'", authorisedUser, authorisedUser);
+		rfl_2d = esql.executeQueryAndReturnResult(query);
+		for ( int i = 0; i < rfl_2d.size(); ++i){
+		    rfl.add(rfl_2d.get(i).get(0).trim());
+		    //System.out.println(rfl_2d.get(i).get(0));
+		}
+	      
+		
 		//Adding the connection
 		System.out.println("Type in a user to add: ");
-		String input = in.readLine().trim();
+		String input = in.readLine();
+		input = input.trim();
+		//System.out.println("Your input was: " + input);
+		//System.out.println("Requester was: " + requester);
 		
 		if (addanyoneflag==false) {
-		//nothing
+		    //System.out.println("Can only add from up to 3 levels of connections");
+		    if (valid_connections.contains(input)) {
+			if (pfl.contains(input)) {
+			    //don't do anything, already pending anyway
+			    System.out.println("There is already a pending friend request");
+			}
+			else if (rfl.contains(input)) {
+			    query = String.format("UPDATE CONNECTION_USR SET status='Request' WHERE (userId='%s' AND connectionId='%s') OR (userId='%s' AND connectionId='%s')", input, requester, requester, input);
+			    System.out.println("The friend request was previously rejected");
+			}
+			else {
+			    query = String.format("INSERT INTO CONNECTION_USR (userId, connectionId, status) VALUES ('%s','%s','Request')", requester, input);
+			}
+			System.out.println("Query will be " + query);
+			//esql.executeQueryandReturnResult(query);
+			System.out.println("You have sent a friend request to " +  input);
+		    }
+		    else {
+			System.out.println("Invalid input");
+			return;
+		    }
 		}
-
-		}catch (Exception e) {
-			System.err.println (e.getMessage());
+		else {
+		    //System.out.println("Add anyone not yourself or already friends");
+		    if (!input.equals(requester) && !tier1_friends.contains(input) && all_users.contains(input)) {
+			//query = String.format("INSERT INTO CONNECTION_USR (userId, connectionId, status) VALUES ('%s','%s','Request')", requester, input);
+			System.out.println("You have sent a friend request to " +  input);
+		    }
+		    else {
+			System.out.println("Invalid input");
+			return;
+		    }
 		}
-		return;
+	    }catch (Exception e) {
+		System.err.println (e.getMessage());
+	    }
+	    return;
 	}
 
 	public static void lookUpUser(ProfNetwork esql){
@@ -1107,4 +1172,3 @@ public class ProfNetwork {
 
 	}
 }//end ProfNetwork
-
