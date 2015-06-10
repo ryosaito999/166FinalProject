@@ -502,48 +502,51 @@ public class ProfNetwork {
 	*/
 	  public static List<List<String> > ViewFriends(ProfNetwork esql, String authorisedUser){
 		//Accepted Friends
-			System.out.println("\n\nAccepted Friends");
-			System.out.println("=========================");
+			System.out.println("\n\tAccepted Friends");
+			System.out.println("\t=========================");
 		
 			List<List<String> > fl = new ArrayList<List<String> >();
 			fl = FriendList(esql, authorisedUser );
 			for ( int i = 0; i < fl.size(); ++i){
+			    System.out.print("\t");
 			  System.out.println(fl.get(i).get(0));
 			}
 			System.out.println("");
 
 		//Pending Friends
-		System.out.println("Pending Friends");
-		System.out.println("=========================");
+		System.out.println("\tPending Friends");
+		System.out.println("\t=========================");
 		List<List<String> > pfl = new ArrayList<List<String> >();
 		String query = String.format("Select C.connectionId FROM CONNECTION_USR C WHERE C.userId='%s' AND C.status='Request' UNION Select C2.userId FROM CONNECTION_USR C2 WHERE C2.connectionId='%s' AND C2.status='Request'", authorisedUser, authorisedUser);
 		try {
-			pfl = esql.executeQueryAndReturnResult(query);
+		    pfl = esql.executeQueryAndReturnResult(query);
 		} catch (Exception e) {
-			System.err.println (e.getMessage());
+		    System.err.println (e.getMessage());
 		}
 		for ( int i = 0; i < pfl.size(); ++i){
-				System.out.println(pfl.get(i).get(0));
-			  }
-			  System.out.println("");
+		    System.out.print("\t");
+		    System.out.println(pfl.get(i).get(0));
+		}
+		System.out.println("");
 
 		//Rejected Friends
-		System.out.println("Rejected Friends");
-		System.out.println("=========================");
+		System.out.println("\tRejected Friends");
+		System.out.println("\t=========================");
 		List<List<String> > rfl = new ArrayList<List<String> >();
 		query = String.format("Select C.connectionId FROM CONNECTION_USR C WHERE C.userId='%s' AND C.status='Reject' UNION Select C2.userId FROM CONNECTION_USR C2 WHERE C2.connectionId='%s' AND C2.status='Reject'", authorisedUser, authorisedUser);
 		try {
-			rfl = esql.executeQueryAndReturnResult(query);
+		    rfl = esql.executeQueryAndReturnResult(query);
 		} catch (Exception e) {
-			System.err.println (e.getMessage());
+		    System.err.println (e.getMessage());
 		}
 		for ( int i = 0; i < rfl.size(); ++i){
-				System.out.println(rfl.get(i).get(0));
-			  }
-			  System.out.println("");
-
-
-			  return fl;
+		    System.out.print("\t");
+		    System.out.println(rfl.get(i).get(0));
+		}
+		System.out.println("");
+		
+		
+		return fl;
 	  }
 
 	/**
