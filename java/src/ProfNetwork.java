@@ -272,7 +272,7 @@ public class ProfNetwork {
 				System.out.println("MAIN MENU");
 				System.out.println("---------");
 				System.out.println("0. View Profile");
-				System.out.println("1. Goto Friend List");
+				System.out.println("1. Accept/Reject Connection Requests");
 				System.out.println("2. Update Profile");
 				System.out.println("3. Write a new message");
 				System.out.println("4. Send Friend Request");
@@ -285,7 +285,7 @@ public class ProfNetwork {
 
 				switch (readChoice()){
 				   case 0: displayProfile(esql, authorisedUser);   break;                
-				   case 1: FriendList(esql, authorisedUser); break;
+				   case 1: AcceptRejectConnectionRequests(esql, authorisedUser); break;
 				   case 2: UpdateProfile(esql, authorisedUser); break;
 				   case 3: SendMsg(esql, authorisedUser); break;
 				   case 4: SendRequest(esql, authorisedUser); break;
@@ -960,8 +960,48 @@ public class ProfNetwork {
 	}
 }
 
-
-
+    public static void AcceptRejectConnectionRequests(ProfNetwork esql, String authorisedUser) {
+	try {
+	    String requester = authorisedUser.trim();
+	    
+	    System.out.println("You have pending requests from: ");
+	    //Pending Friends
+	    List<List<String> > pfl_2d = new ArrayList<List<String> >();
+	    List<String> pfl = new ArrayList<String>();
+	    String query = String.format("Select C.connectionId FROM CONNECTION_USR C WHERE C.userId='%s' AND C.status='Request' UNION Select C2.userId FROM CONNECTION_USR C2 WHERE C2.connectionId='%s' AND C2.status='Request'", requester, requester);
+	    pfl_2d = esql.executeQueryAndReturnResult(query);
+	    for ( int i = 0; i < pfl_2d.size(); ++i){
+		//System.out.print(i + ". ");
+		System.out.print("\t");
+		pfl.add((pfl_2d.get(i).get(0)).trim());
+		System.out.println(pfl_2d.get(i).get(0));
+	    }
+	    
+	    System.out.println("Input the user to Accept/Reject: ");
+	    String user = in.readLine();
+	    user = user.trim();
+	    if (pfl.contains(user)) {
+		System.out.println("Accept (y)\nReject(n)");
+		String input = in.readLine();
+		input = input.trim();
+		if (input.equals("y")) { query = String.format("UPDATE CONNECTION_USR SET status='Accept' WHERE (userId='%s' AND connectionId='%s') OR (userId='%s' AND connectionId='%s')", user, requester, requester, user); }
+		else if (input.equals("n")) { query = String.format("UPDATE CONNECTION_USR SET status='Reject' WHERE (userId='%s' AND connectionId='%s') OR (userId='%s' AND connectionId='%s')", user, requester, requester, user); }
+		else { 
+		    System.out.println("Invalid input"); 
+		    return;
+		}
+		esql.executeUpdate(query);
+		System.out.println("Connection has been updated");
+	    }
+	    else {
+		System.out.println("Invalid input of userId");
+		return;
+	    }
+	} catch (Exception e) {
+	    System.err.println(e.getMessage());
+	}
+    }
+   
 
 	public static void displayProfile(ProfNetwork esql, String authorisedUser){
 	try{
