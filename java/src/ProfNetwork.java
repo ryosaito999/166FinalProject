@@ -835,6 +835,23 @@ public class ProfNetwork {
       return;
     }
 
+    public static String getNextMsgID(ProfNetwork esql){
+    List<List<String> > msgNumStringList = new ArrayList<List<String> >();
+    try{
+    
+       String query = String.format ("SELECT max(msgId) from MESSAGE ");
+       msgNumStringList = esql.executeQueryAndReturnResult(query);
+      }catch(Exception e){
+          System.err.println(e.getMessage() );
+      }
+
+      int maxID = Integer.parseInt(msgNumStringList.get(0).get(0));
+      maxID = maxID+1;
+      return "" + maxID;
+
+
+    }
+
     public static void NewMessage(ProfNetwork esql, String username, String reciver){
       try{
 
@@ -849,8 +866,9 @@ public class ProfNetwork {
       }
 
      String newStatus = "Sent";
-     String query = String.format("INSERT INTO MESSAGE ( senderId, receiverId, sendTime, deleteStatus, status) VALUES ('%s','%s',CURRENT_TIMESTAMP ,'%s', '%s')", username, reciver,  0 , newStatus);
-     esql.executeUpdate(query);
+     String n = getNextMsgID(esql).trim();
+     //String query = String.format("INSERT INTO MESSAGE ( msgId, senderId, receiverId, contents, sendTime, deleteStatus, status) VALUES ('%s', %s','%s', '%s', now , 0 , '%s')", n, username, reciver, msg, newStatus);
+     //esql.executeUpdate(query);
      return;
 
       }catch(Exception e){
@@ -860,7 +878,6 @@ public class ProfNetwork {
     
     public static void SendMsg(ProfNetwork esql, String username){
 
-      // dummy sql commands go here for 166 final
       try{
 
       List<List<String> > fList = new ArrayList<List<String> >();
@@ -868,18 +885,20 @@ public class ProfNetwork {
 
       System.out.println("Type the name of the friend you would like to send a message to (Enter 'n' to exit) : ");
       String friendChoice = in.readLine();
+      friendChoice = friendChoice.trim();
+
       if( friendChoice.equals("n")){
           return;
       }
 
-      NewMessage(esql, username, friendChoice);
 
+      for(int i = 0; i  < fList.get(0).size();  i++) {
+             if ( fList.get(i).get(0).trim().equals(friendChoice) ){
+                NewMessage(esql, username, friendChoice);
+                return;
+             }
+      }
 
-
-
-      // else if(fList.get(0).contains(friendChoice)){
-      // NewMessage(esql);
-      // }
       
       // else{
 
