@@ -872,7 +872,7 @@ public class ProfNetwork {
 		    //System.out.println("Can only add from up to 3 levels of connections");
 		    if (valid_connections.contains(input)) {
 			if (pfl.contains(input)) {
-			    //don't do anything, already pending anyway
+			    query = String.format("UPDATE CONNECTION_USR SET status='Request' WHERE (userId='%s' AND connectionId='%s') OR (userId='%s' AND connectionId='%s')", input, requester, requester, input);
 			    System.out.println("There is already a pending friend request");
 			}
 			else if (rfl.contains(input)) {
@@ -882,8 +882,8 @@ public class ProfNetwork {
 			else {
 			    query = String.format("INSERT INTO CONNECTION_USR (userId, connectionId, status) VALUES ('%s','%s','Request')", requester, input);
 			}
-			System.out.println("Query will be " + query);
-			//esql.executeQueryandReturnResult(query);
+			//System.out.println("Query will be " + query);
+			esql.executeUpdate(query);
 			System.out.println("You have sent a friend request to " +  input);
 		    }
 		    else {
@@ -894,7 +894,19 @@ public class ProfNetwork {
 		else {
 		    //System.out.println("Add anyone not yourself or already friends");
 		    if (!input.equals(requester) && !tier1_friends.contains(input) && all_users.contains(input)) {
-			//query = String.format("INSERT INTO CONNECTION_USR (userId, connectionId, status) VALUES ('%s','%s','Request')", requester, input);
+			if (pfl.contains(input)) {
+			    query = String.format("UPDATE CONNECTION_USR SET status='Request' WHERE (userId='%s' AND connectionId='%s') OR (userId='%s' AND connectionId='%s')", input, requester, requester, input);
+			    System.out.println("There is already a pending friend request");
+			}
+			else if (rfl.contains(input)) {
+			    query = String.format("UPDATE CONNECTION_USR SET status='Request' WHERE (userId='%s' AND connectionId='%s') OR (userId='%s' AND connectionId='%s')", input, requester, requester, input);
+			    System.out.println("The friend request was previously rejected");
+			}
+			else {
+			    query = String.format("INSERT INTO CONNECTION_USR (userId, connectionId, status) VALUES ('%s','%s','Request')", requester, input);
+			}
+			//System.out.println("Query will be " + query);
+			esql.executeUpdate(query);
 			System.out.println("You have sent a friend request to " +  input);
 		    }
 		    else {
