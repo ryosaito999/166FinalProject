@@ -22,6 +22,7 @@ import java.io.InputStreamReader;
 import java.util.List;
 import java.util.ArrayList;
 import java.sql.Date;
+import java.sql.Timestamp;
 import java.util.*;
 
 
@@ -287,10 +288,10 @@ public class ProfNetwork {
                    case 0: displayProfile(esql, authorisedUser);   break;                
                    case 1: FriendList(esql, authorisedUser); break;
                    case 2: UpdateProfile(esql, authorisedUser); break;
-                   case 3: NewMessage(esql); break;
-		case 4: SendRequest(esql, authorisedUser); break;
+                   case 3: SendMsg(esql, authorisedUser); break;
+		               case 4: SendRequest(esql, authorisedUser); break;
                    case 5: lookUpUser(esql); break;
-		               case 6: ViewFriends(esql); break;
+		               case 6: ViewFriends(esql, authorisedUser); break;
                    case 7: GotToFriend(esql); break;
                    case 8: SendMsg(esql, authorisedUser); break;
                    case 9: changePass(esql, authorisedUser); break;                   
@@ -476,29 +477,37 @@ public class ProfNetwork {
 
    /* Functions we need to implement */
    // User code goes here!
-    public static void FriendList(ProfNetwork esql, String authorisedUser) {
-  	try{
+    public static List<List<String> > FriendList(ProfNetwork esql, String authorisedUser) {
 
-        List<List<String> > friendsList = new ArrayList<List<String> >();
-  	    String query = String.format("SELECT C.connectionId FROM CONNECTION_USR C WHERE C.userId = '%s'", authorisedUser);
-  	    friendsList = esql.executeQueryAndReturnResult(query);
-        
+        String query = String.format("SELECT C.connectionId FROM CONNECTION_USR C WHERE C.userId = '%s'", authorisedUser);
+        List<List<String>> fList=new ArrayList<List<String> >();
+  	    try{
+
+	      fList = esql.executeQueryAndReturnResult(query);
+
+        } catch (Exception e) {
+  	    System.err.println (e.getMessage ());
+      	}  
+
+        return fList;
+
+
+
+   }
+    
+    public static List<List<String> > ViewFriends(ProfNetwork esql, String username){
+
         System.out.println("Friends");
         System.out.println("========================="  + "\n");
 
-        for ( int i = 0; i < friendsList.get(0).size(); ++i){
-          System.out.println(friendsList.get(0).get(i));
+        List<List<String> > fl = new ArrayList<List<String> >();
+        fl = FriendList(esql, username );
+        for ( int i = 0; i < fl.get(0).size(); ++i){
+          System.out.println(fl.get(0).get(i));
         }
         System.out.println("");
-
-
-
-
-
-    } catch (Exception e) {
-  	    System.err.println (e.getMessage ());
-  	}
-  	return;
+        return fl;
+        
     }
 
     private static void updateField(ProfNetwork esql, String username , String field, String tableName){
@@ -638,29 +647,26 @@ public class ProfNetwork {
        }
 
    } 
-    
-    public static void NewMessage(ProfNetwork esql){
-
-    }
+  
     
     public static void SendRequest(ProfNetwork esql, String authorisedUser){
-	try {
-	    String requester = authorisedUser;
-	    String query = String.format("Select C.connectionId FROM CONNECTION_USR C WHERE userId='%s'", requester);
-	    List<List<String>> result = esql.executeQueryAndReturnResult(query);
-	    //ListIterator<List<String>> iteri = result.listIterator();
-	    //	    ListIterator<String> iterj = iteri.next();
-	    //ListIterator<String> iter = result.get(0).iterator();
-	    /*	    for (ListIterator<String> iterj = iteri.next(); iterj.hasNext(); ) {
-		String user = iter.next();
-		}*/
-	    //List<List<String>> executeQueryAndReturnResult (String query)
-	}
-	catch (Exception e) {
-	    System.err.println (e.getMessage());
-	}
-	return;
-    }
+    	try {
+    	    String requester = authorisedUser;
+    	    String query = String.format("Select C.connectionId FROM CONNECTION_USR C WHERE userId='%s'", requester);
+    	    List<List<String>> result = esql.executeQueryAndReturnResult(query);
+    	    //ListIterator<List<String>> iteri = result.listIterator();
+    	    //	    ListIterator<String> iterj = iteri.next();
+    	    //ListIterator<String> iter = result.get(0).iterator();
+    	    /*	    for (ListIterator<String> iterj = iteri.next(); iterj.hasNext(); ) {
+    		String user = iter.next();
+    		}*/
+    	    //List<List<String>> executeQueryAndReturnResult (String query)
+    	}
+    	catch (Exception e) {
+    	    System.err.println (e.getMessage());
+    	}
+    	return;
+        }
 
 
     public static void lookUpUser(ProfNetwork esql){
@@ -766,12 +772,7 @@ public class ProfNetwork {
       System.out.println("Degree: " + degree);
       System.out.println("Start Date: " + startEdu);
       System.out.println("End Date: " + endEdu + "\n");
-
-
-      FriendList(esql, username);
-
-
-
+      ViewFriends(esql, username);
       return;
 
       }catch(Exception e){
@@ -779,17 +780,66 @@ public class ProfNetwork {
          //return ;
        }
     } 
-    public static void ViewFriends(ProfNetwork esql){
-        return;
 
-    }
     public static void GotToFriend(ProfNetwork esql){
       return;
     }
+
+    public static void NewMessage(ProfNetwork esql, String username, String reciver){
+      try{
+
+      System.out.println("Type your msg in"); 
+      System.out.println("========================="  + "\n");
+
+      String msg ="";
+      String line = "_";
+      while ( !line .equals("") ){
+        line = in.readLine();
+        msg += line;
+      }
+
+     String newStatus = "Sent";
+     String query = String.format("INSERT INTO MESSAGE ( senderId, receiverId, sendTime, deleteStatus, status) VALUES ('%s','%s',CURRENT_TIMESTAMP ,'%s', '%s')", username, reciver,  0 , newStatus);
+     esql.executeUpdate(query);
+     return;
+
+      }catch(Exception e){
+        System.err.println(e.getMessage() );
+      }
+    }
+    
     public static void SendMsg(ProfNetwork esql, String username){
+
+      // dummy sql commands go here for 166 final
+      try{
+
+      List<List<String> > fList = new ArrayList<List<String> >();
+      fList=ViewFriends(esql, username); 
+
+      System.out.println("Type the name of the friend you would like to send a message to (Enter 'n' to exit) : ");
+      String friendChoice = in.readLine();
+      if( friendChoice.equals("n")){
+          return;
+      }
+
+      NewMessage(esql, username, friendChoice);
+
+
+
+
+      // else if(fList.get(0).contains(friendChoice)){
+      // NewMessage(esql);
+      // }
       
-   try{
-      
+      // else{
+
+      //   System.out.println("User not found in friend list");
+      //   return;
+      // }
+
+
+
+          
      }catch(Exception e){
        System.err.println(e.getMessage() );
      }
