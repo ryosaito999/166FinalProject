@@ -278,9 +278,8 @@ public class ProfNetwork {
 				System.out.println("4. Send Friend Request");
 				System.out.println("5. Search Users");
 				System.out.println("6. View all Friends");
-				System.out.println("7. Goto a friend's profile");
-				System.out.println("8. View All Messages");
-				System.out.println("9 Log out");
+				System.out.println("7. View All Messages");
+				System.out.println("8 Log out");
 
 
 				switch (readChoice()){
@@ -291,9 +290,8 @@ public class ProfNetwork {
 				   case 4: SendRequest(esql, authorisedUser); break;
 				   case 5: lookUpUser(esql, authorisedUser); break;
 				   case 6: ViewFriends(esql, authorisedUser); break;
-				   case 7: GotToFriend(esql); break;
-				   case 8: viewMessages(esql, authorisedUser); break;
-				   case 9: usermenu = false; break;
+				   case 7: viewMessages(esql, authorisedUser); break;
+				   case 8: usermenu = false; break;
 				   default : System.out.println("Unrecognized choice!"); break;
 				}
 			  }
@@ -917,6 +915,95 @@ public class ProfNetwork {
 	    return;
 	}
 
+
+	public static void SendRequest(ProfNetwork esql, String authorisedUser){
+	    try {
+		String requester = authorisedUser.trim();
+		String query = String.format("Select C.connectionId FROM CONNECTION_USR C WHERE C.userId='%s' AND C.status='Accept' UNION Select C2.userId FROM CONNECTION_USR C2 WHERE C2.connectionId='%s' AND C2.status='Accept'", requester, requester);
+		List<List<String>> result = esql.executeQueryAndReturnResult(query);
+		
+		List<String> tier1_friends = new ArrayList<String>();
+		List<String> tier2_friends = new ArrayList<String>();
+		List<String> tier3_friends = new ArrayList<String>();
+		List<String> all_users = new ArrayList<String>();
+		//System.out.println("1st connection friends: ");
+		//Add Tier1 Friends
+		for (int i=0; i<result.size(); i++) {
+		    tier1_friends.add(result.get(i).get(0).trim());
+		    //System.out.println(result.get(i).get(0));
+		}
+		//Add Tier2 Friends
+		//System.out.println("2nd connection friends: ");
+		for (int i=0; i<tier1_friends.size(); i++) {
+		    requester = tier1_friends.get(i);
+		    query = String.format("Select C.connectionId FROM CONNECTION_USR C WHERE C.userId='%s' AND C.status='Accept' UNION Select C2.userId FROM CONNECTION_USR C2 WHERE C2.connectionId='%s' AND C2.status='Accept'", requester, requester);
+		    result = esql.executeQueryAndReturnResult(query);
+		    for (int j=0; j<result.size(); j++) {
+			tier2_friends.add(result.get(j).get(0).trim());
+			//System.out.println(result.get(j).get(0));
+		    }
+		}
+		//Add Tier3 Friends
+		//System.out.println("3rd connection friends: ");
+		for (int i=0; i<tier2_friends.size(); i++) {
+		    requester = tier2_friends.get(i);
+		    query = String.format("Select C.connectionId FROM CONNECTION_USR C WHERE C.userId='%s' AND C.status='Accept' UNION Select C2.userId FROM CONNECTION_USR C2 WHERE C2.connectionId='%s' AND C2.status='Accept'", requester, requester);
+		    result = esql.executeQueryAndReturnResult(query);
+		    for (int j=0; j<result.size(); j++) {
+			tier3_friends.add(result.get(j).get(0).trim());
+			//System.out.println(result.get(j).get(0));
+		    }
+		}
+		requester = authorisedUser.trim();
+		//Make all users list
+		//System.out.println("All users list: ");
+		query = String.format("Select userId FROM USR");
+		result = esql.executeQueryAndReturnResult(query);
+		for (int i=0; i<result.size(); i++) {
+		    all_users.add(result.get(i).get(0).trim());
+		    //System.out.println(result.get(i).get(0));
+		}
+	}
+
+
+	public static void GoToFriend(ProfNetwork esql, String authorisedUser){
+	  try{
+
+		List<List<String>> friendsFriends = FriendList(esql, authorisedUser);
+		System.out.println("Enter the name of the user you would like to look at: ");
+		String requestedUser = in.readLine().trim();
+
+		for ( int i=0 ; i < friendsFriends.size() ; ++i){
+
+			if(friendsFriends.get(i).get(0).trim().equals(requestedUser)){
+				displayProfile(esql, requestedUser);
+
+				System.out.println("\nSelect an option: ");
+				System.out.println("---------");
+				System.out.println("1. Lookup a Profile on the friends list");
+				System.out.println("2. Send this person a message");
+				System.out.println("3. Send a connection request");
+				System.out.println("4. Menu");
+
+
+			  switch (readChoice()){                   
+				 case 1: GoToFriend(esql, requestedUser);return;
+				 case 2: NewMessage(esql, authorisedUser, requestedUser); return;
+				 case 3: GoToFriend(esql, requestedUser);return;
+				 case 4: return; 
+				 default : System.out.println("Unrecognized choice!"); break;
+				}
+				return;
+			}
+		}
+
+		System.out.println("\n Requested User not found");
+		return;
+	}catch (Exception e) {
+	    System.err.println(e.getMessage());}
+	}
+
+
 	public static void lookUpUser(ProfNetwork esql, String authorisedUser){
 	  String requestedUser;
 
@@ -952,10 +1039,12 @@ public class ProfNetwork {
 
 
   switch (readChoice()){                   
-	 case 1: ; break;
-	 case 2: NewMessage(esql, authorisedUser, requestedUser); break;
-	 case 3: ; break;
+	 case 1: GoToFriend(esql, requestedUser);return;
+	 case 2: NewMessage(esql, authorisedUser, requestedUser); return;
+	 case 3: GoToFriend(esql, requestedUser);return;
 	 case 4: return; 
+    default : System.out.println("Unrecognized choice!"); break;
+
 
 	}
 }
@@ -1067,9 +1156,6 @@ public class ProfNetwork {
 	}
 	} 
 
-	public static void GotToFriend(ProfNetwork esql){
-	  return;
-	}
 
 	public static void replyInbox(ProfNetwork esql, String authorisedUser){
 	try{
