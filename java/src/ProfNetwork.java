@@ -953,11 +953,18 @@ public class ProfNetwork {
     		List<String> msgRow = msgTable.get(i);
 			System.out.println( "From "  + msgRow.get(1).trim() + ":\tMessage ID: " + msgRow.get(0).trim() + "\tSent: " +  msgRow.get(4).trim()  ); 
 			System.out.println("========================================================================="  + "\n");
-			System.out.println(msgRow.get(3) + "\n" );
+			System.out.println(msgRow.get(3)  );
 			
 			//query = String.format("SELECT * FROM MESSAGE WHERE senderId='%s' " , authorisedUser,authorisedUser );  
 		    query = String.format("UPDATE MESSAGE SET status = 'Read' WHERE msgId='%s'  ", msgRow.get(0) );
 		    esql.executeUpdate(query);
+
+			System.out.println("\nSelect an option: ");
+			System.out.println("---------");
+			System.out.println("1. Reply to a Message");
+			System.out.println("2. Delete a message");
+			System.out.println("3. Go Back");
+
 		}
 
 		}catch(Exception e){
@@ -980,10 +987,9 @@ public class ProfNetwork {
     		List<String> msgRow = msgTable.get(i);
 			System.out.println( "To "  + msgRow.get(2).trim() + ": \t Status: " + msgRow.get(6).trim() + "\tSent: " + msgRow.get(4).trim()  ); 
 			System.out.println("=========================================================================="  + "\n");
-			System.out.println(msgRow.get(3) + "\n" );
-		    esql.executeUpdate(query);
+			System.out.println(msgRow.get(3)  );
 		}
-		
+
 		}catch(Exception e){
 			System.err.println(e.getMessage() );}
 
