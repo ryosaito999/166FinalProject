@@ -280,7 +280,7 @@ public class ProfNetwork {
 				System.out.println("6. View all Friends");
 				System.out.println("7. Goto a friend's profile");
 				System.out.println("8. View All Messages");
-				System.out.println("10. Log out");
+				System.out.println("9 Log out");
 
 
 				switch (readChoice()){
@@ -938,6 +938,104 @@ public class ProfNetwork {
 	  return;
 	}
 
+	public static void replyInbox(ProfNetwork esql, String authorisedUser){
+	try{
+
+		System.out.println("\nType ID of message you would like to reply to:");
+		String replyID= in.readLine().trim();
+		List<List<String> > msgTable = new ArrayList<List<String> >();
+
+
+		String query = String.format("SELECT senderId ,receiverId FROM MESSAGE WHERE receiverId='%s' AND msgId = %s " , authorisedUser, replyID);  
+		int resultNum = esql.executeQuery(query);
+
+		if(resultNum > 0){
+			msgTable = esql.executeQueryAndReturnResult(query);
+			NewMessage(esql, msgTable.get(0).get(1).trim() , msgTable.get(0).get(0).trim() );
+			return;
+		}
+
+		else{
+			System.out.println("Invalid Message ID\n");
+			return;
+		}
+
+	}catch(Exception e){
+			System.err.println(e.getMessage() );}
+
+		return;
+	}
+
+	/*
+	Delete Statuses:
+	1 = sender delted msg
+	2 = reciver deleted
+	3 = both sender & reciver deleted
+	*/
+	public static void delInbox(ProfNetwork esql, String authorisedUser, String user){
+
+	try{
+
+		boolean oneSideDelted = false;
+
+		System.out.println("\nType ID of message you would like to Delete:");
+		String replyID= in.readLine().trim();
+		List<List<String> > msgTable = new ArrayList<List<String> >();
+		String query = "";
+		if( user.equals("reciver") ){
+			 query = String.format("SELECT msgId , deleteStatus FROM MESSAGE WHERE receiverId='%s' AND msgId = %s " , authorisedUser, replyID);  
+		}
+		else{
+			 query = String.format("SELECT msgId , deleteStatus FROM MESSAGE WHERE senderId='%s' AND msgId = %s " , authorisedUser, replyID);  
+		}
+
+
+		msgTable = esql.executeQueryAndReturnResult(query);
+		int resultNum = esql.executeQuery(query);
+
+		if(resultNum > 0){
+			if( user.equals("reciver")){
+
+				if(msgTable.get(0).get(1).equals("0")){
+					query = String.format("UPDATE MESSAGE SET deleteStatus = 2  WHERE msgId='%s'  ", msgTable.get(0).get(0) );
+				}
+
+				else {
+					query = String.format("UPDATE MESSAGE SET deleteStatus = 3  WHERE msgId='%s'  ", msgTable.get(0).get(0) );					
+				}
+			}
+			else{
+
+				if(msgTable.get(0).get(1).equals("0") ) {
+					query = String.format("UPDATE MESSAGE SET deleteStatus = 1  WHERE msgId='%s'  ", msgTable.get(0).get(0) );
+				}
+
+				else{
+					query = String.format("UPDATE MESSAGE SET deleteStatus = 3  WHERE msgId='%s'  ", msgTable.get(0).get(0) );					
+				}				
+
+			}
+			
+			msgTable = esql.executeQueryAndReturnResult(query);
+			System.out.println("Message deleted\n");
+
+			return;
+		}
+
+		else{
+			System.out.println("Invalid Message ID\n");
+			return;
+		}
+
+	}catch(Exception e){
+			//System.err.println(e.getMessage() );}
+
+		return;
+	}
+
+
+
+
 
 	public static void seeInbox(ProfNetwork esql, String authorisedUser){
 
@@ -945,19 +1043,20 @@ public class ProfNetwork {
 	
 		try{
 
-		String query = String.format("SELECT * FROM MESSAGE WHERE receiverId='%s' AND status != 'Failed to Deliver'" , authorisedUser );  
-		msgTable = esql.executeQueryAndReturnResult(query);
+			String query = String.format("SELECT * FROM MESSAGE WHERE receiverId='%s' AND status != 'Failed to Deliver' AND status != 'Draft' AND deleteStatus != 2 AND deleteStatus != 3" , authorisedUser );  
+			msgTable = esql.executeQueryAndReturnResult(query);
 
-    	for(int i = 0; i  < msgTable.size();  i++) {
+	    	for(int i = 0; i  < msgTable.size();  i++) {
 
-    		List<String> msgRow = msgTable.get(i);
-			System.out.println( "From "  + msgRow.get(1).trim() + ":\tMessage ID: " + msgRow.get(0).trim() + "\tSent: " +  msgRow.get(4).trim()  ); 
-			System.out.println("========================================================================="  + "\n");
-			System.out.println(msgRow.get(3)  );
-			
-			//query = String.format("SELECT * FROM MESSAGE WHERE senderId='%s' " , authorisedUser,authorisedUser );  
-		    query = String.format("UPDATE MESSAGE SET status = 'Read' WHERE msgId='%s'  ", msgRow.get(0) );
-		    esql.executeUpdate(query);
+	    		List<String> msgRow = msgTable.get(i);
+				System.out.println( "From "  + msgRow.get(1).trim() + ":\tMessage ID: " + msgRow.get(0).trim() + "\tSent: " +  msgRow.get(4).trim()  ); 
+				System.out.println("========================================================================="  + "\n");
+				System.out.println(msgRow.get(3).trim()  );
+				
+				//query = String.format("SELECT * FROM MESSAGE WHERE senderId='%s' " , authorisedUser,authorisedUser );  
+			    query = String.format("UPDATE MESSAGE SET status = 'Read' WHERE msgId='%s'  ", msgRow.get(0) );
+			    esql.executeUpdate(query);
+			} 
 
 			System.out.println("\nSelect an option: ");
 			System.out.println("---------");
@@ -965,8 +1064,15 @@ public class ProfNetwork {
 			System.out.println("2. Delete a message");
 			System.out.println("3. Go Back");
 
-		}
 
+			switch (readChoice()){  
+				case 1: replyInbox(esql, authorisedUser);                 
+				case 2: delInbox(esql, authorisedUser, "reciver" ); break;
+				case 3: return; 
+				default : System.out.println("Unrecognized choice!"); break;
+			}
+
+	
 		}catch(Exception e){
 			System.err.println(e.getMessage() );}
 
@@ -979,16 +1085,30 @@ public class ProfNetwork {
 		System.out.println("");
 		try{
 
-		String query = String.format("SELECT * FROM MESSAGE WHERE senderId='%s' " , authorisedUser );  
+		String query = String.format("SELECT * FROM MESSAGE WHERE senderId='%s' AND status != 'Failed to Deliver' AND status != 'Draft' AND deleteStatus != 1 AND deleteStatus != 3" , authorisedUser );  
 		msgTable = esql.executeQueryAndReturnResult(query);
 
     	for(int i = 0; i  < msgTable.size();  i++) {
 
     		List<String> msgRow = msgTable.get(i);
-			System.out.println( "To "  + msgRow.get(2).trim() + ": \t Status: " + msgRow.get(6).trim() + "\tSent: " + msgRow.get(4).trim()  ); 
+			System.out.println( "To "  + msgRow.get(2).trim() + ": \t Status: " + msgRow.get(6).trim() + "\tSent: " + msgRow.get(4).trim() + ":\tMessage ID: " + msgRow.get(0).trim() ); 
 			System.out.println("=========================================================================="  + "\n");
-			System.out.println(msgRow.get(3)  );
+			System.out.println(msgRow.get(3).trim()  );
 		}
+
+
+		System.out.println("\nSelect an option: ");
+		System.out.println("---------");
+		System.out.println("1. Delete a message");
+		System.out.println("2. Go Back");
+
+
+		switch (readChoice()){                   
+			case 1: delInbox(esql, authorisedUser, "sender" ); break;
+			case 2: return; 
+			default : System.out.println("Unrecognized choice!"); break;
+		}
+
 
 		}catch(Exception e){
 			System.err.println(e.getMessage() );}
@@ -1000,6 +1120,8 @@ public class ProfNetwork {
 	public static void viewMessages(ProfNetwork esql, String authorisedUser){
 		try{
 
+		while (true){  	
+
 			System.out.println("\nSelect an option: ");
 			System.out.println("---------");
 			System.out.println("1. See your inbox");
@@ -1007,7 +1129,6 @@ public class ProfNetwork {
 			System.out.println("3. Menu");
 
 		
-		while (true){  	
 		  switch (readChoice()){                   
 			 case 1: seeInbox(esql, authorisedUser); break;
 			 case 2: printSentMsg(esql, authorisedUser); break;
@@ -1113,4 +1234,3 @@ public class ProfNetwork {
 
 	}
 }//end ProfNetwork
-
