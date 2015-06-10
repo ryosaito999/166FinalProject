@@ -1183,7 +1183,7 @@ public class ProfNetwork {
 	    String user = in.readLine();
 	    user = user.trim();
 	    if (pfl.contains(user)) {
-		System.out.println("Accept (y)\nReject(n)");
+		System.out.println("Accept (y)\nReject (n)");
 		String input = in.readLine();
 		input = input.trim();
 		if (input.equals("y")) { query = String.format("UPDATE CONNECTION_USR SET status='Accept' WHERE (userId='%s' AND connectionId='%s') OR (userId='%s' AND connectionId='%s')", user, requester, requester, user); }
