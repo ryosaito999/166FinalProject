@@ -288,9 +288,9 @@ public class ProfNetwork {
 				   case 1: FriendList(esql, authorisedUser); break;
 				   case 2: UpdateProfile(esql, authorisedUser); break;
 				   case 3: SendMsg(esql, authorisedUser); break;
-					   case 4: SendRequest(esql, authorisedUser); break;
-				   case 5: lookUpUser(esql); break;
-					   case 6: ViewFriends(esql, authorisedUser); break;
+				   case 4: SendRequest(esql, authorisedUser); break;
+				   case 5: lookUpUser(esql, authorisedUser); break;
+				   case 6: ViewFriends(esql, authorisedUser); break;
 				   case 7: GotToFriend(esql); break;
 				   case 8: viewMessages(esql, authorisedUser); break;
 				   case 9: usermenu = false; break;
@@ -492,9 +492,6 @@ public class ProfNetwork {
 		}  
 
 		return fList;
-
-
-
    }
 
 
@@ -920,10 +917,12 @@ public class ProfNetwork {
 	    return;
 	}
 
-	public static void lookUpUser(ProfNetwork esql){
+	public static void lookUpUser(ProfNetwork esql, String authorisedUser){
+	  String requestedUser;
+
 	  try{
 		System.out.println("Enter the name of the user you would like to find: ");
-		String requestedUser = in.readLine();
+		requestedUser = in.readLine();
 		System.out.println("Searching....\n");
 
 		String query = String.format("SELECT * FROM USR WHERE userId = '%s'", requestedUser);
@@ -942,7 +941,24 @@ public class ProfNetwork {
 		 System.err.println (e.getMessage ());
 		 return ;
 	  }
+
+
+	System.out.println("\nSelect an option: ");
+	System.out.println("---------");
+	System.out.println("1. Lookup a Profile on the friends list");
+	System.out.println("2. Send this person a message");
+	System.out.println("3. Send a connection request");
+	System.out.println("4. Menu");
+
+
+  switch (readChoice()){                   
+	 case 1: ; break;
+	 case 2: NewMessage(esql, authorisedUser, requestedUser); break;
+	 case 3: ; break;
+	 case 4: return; 
+
 	}
+}
 
 
 
@@ -1109,10 +1125,7 @@ public class ProfNetwork {
 
 		return;
 	}
-
-
-
-
+}
 
 	public static void seeInbox(ProfNetwork esql, String authorisedUser){
 
@@ -1121,6 +1134,13 @@ public class ProfNetwork {
 		try{
 
 			String query = String.format("SELECT * FROM MESSAGE WHERE receiverId='%s' AND status != 'Failed to Deliver' AND status != 'Draft' AND deleteStatus != 2 AND deleteStatus != 3" , authorisedUser );  
+			
+			int numResult = esql.executeQuery(query);
+			if (numResult <= 0){
+				System.out.println("Inbox is empty!\n");
+				return;
+			}
+
 			msgTable = esql.executeQueryAndReturnResult(query);
 
 	    	for(int i = 0; i  < msgTable.size();  i++) {
@@ -1163,7 +1183,14 @@ public class ProfNetwork {
 		try{
 
 		String query = String.format("SELECT * FROM MESSAGE WHERE senderId='%s' AND status != 'Failed to Deliver' AND status != 'Draft' AND deleteStatus != 1 AND deleteStatus != 3" , authorisedUser );  
+		
+		int numResult = esql.executeQuery(query);
+		if (numResult <= 0){
+			System.out.println("Inbox is empty!\n");
+			return;
+		}
 		msgTable = esql.executeQueryAndReturnResult(query);
+
 
     	for(int i = 0; i  < msgTable.size();  i++) {
 
