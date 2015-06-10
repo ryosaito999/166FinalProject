@@ -566,6 +566,7 @@ public class ProfNetwork {
 		}
 		System.out.println("");
 
+		return fl;
 
 	}
 
@@ -870,7 +871,7 @@ public class ProfNetwork {
 
 
 	public static void displayProfile(ProfNetwork esql, String authorisedUser){
-		try{
+	try{
 		String query = String.format("SELECT email, name , dateOfBirth FROM USR WHERE userId='%s'", authorisedUser );  
 		List<List<String> > usrArray = new ArrayList<List<String> >();
 		usrArray = esql.executeQueryAndReturnResult(query);
@@ -927,25 +928,96 @@ public class ProfNetwork {
 		ViewFriendsSimple(esql, authorisedUser);
 		return;
 
-		}catch(Exception e){
-		//System.err.println (e.getMessage ());
-		//return ;
-		}
+	}catch(Exception e){
+	//System.err.println (e.getMessage ());
+	//return ;
+	}
 	} 
 
 	public static void GotToFriend(ProfNetwork esql){
 	  return;
 	}
 
+
+	public static void seeInbox(ProfNetwork esql, String authorisedUser){
+
+		List<List<String> > msgTable = new ArrayList<List<String> >();
+	
+		try{
+
+		String query = String.format("SELECT * FROM MESSAGE WHERE receiverId='%s' AND status != 'Failed to Deliver'" , authorisedUser );  
+		msgTable = esql.executeQueryAndReturnResult(query);
+
+    	for(int i = 0; i  < msgTable.size();  i++) {
+
+    		List<String> msgRow = msgTable.get(i);
+			System.out.println( "From "  + msgRow.get(1).trim() + ":\tMessage ID: " + msgRow.get(0).trim() + "\tSent: " +  msgRow.get(4).trim()  ); 
+			System.out.println("========================================================================="  + "\n");
+			System.out.println(msgRow.get(3) + "\n" );
+			
+			//query = String.format("SELECT * FROM MESSAGE WHERE senderId='%s' " , authorisedUser,authorisedUser );  
+		    query = String.format("UPDATE MESSAGE SET status = 'Read' WHERE msgId='%s'  ", msgRow.get(0) );
+		    esql.executeUpdate(query);
+		}
+
+		}catch(Exception e){
+			System.err.println(e.getMessage() );}
+
+		return;
+
+	}
+
+	public static void printSentMsg( ProfNetwork esql, String authorisedUser){
+		List<List<String> > msgTable = new ArrayList<List<String> >();
+		System.out.println("");
+		try{
+
+		String query = String.format("SELECT * FROM MESSAGE WHERE senderId='%s' " , authorisedUser );  
+		msgTable = esql.executeQueryAndReturnResult(query);
+
+    	for(int i = 0; i  < msgTable.size();  i++) {
+
+    		List<String> msgRow = msgTable.get(i);
+			System.out.println( "To "  + msgRow.get(2).trim() + ": \t Status: " + msgRow.get(6).trim() + "\tSent: " + msgRow.get(4).trim()  ); 
+			System.out.println("=========================================================================="  + "\n");
+			System.out.println(msgRow.get(3) + "\n" );
+		    esql.executeUpdate(query);
+		}
+		
+		}catch(Exception e){
+			System.err.println(e.getMessage() );}
+
+		return;
+
+	}
+
 	public static void viewMessages(ProfNetwork esql, String authorisedUser){
-	  try{
+		try{
+
+			System.out.println("\nSelect an option: ");
+			System.out.println("---------");
+			System.out.println("1. See your inbox");
+			System.out.println("2. View all sent messages");
+			System.out.println("3. Menu");
 
 		
-	  
-	  }catch(Exception e){
+		while (true){  	
+		  switch (readChoice()){                   
+			 case 1: seeInbox(esql, authorisedUser); break;
+			 case 2: printSentMsg(esql, authorisedUser); break;
+			 case 3: return; 
+
+			 default : System.out.println("Unrecognized choice!"); break;
+		}
+		
+    	}
+
+
+
+		}catch(Exception e){
 		System.err.println(e.getMessage() );
-	  }
-	  return;
+		}
+			return;
 	}
 
 	public static String getNextMsgID(ProfNetwork esql){
@@ -989,31 +1061,49 @@ public class ProfNetwork {
 	  }
 	}
 
+	public static boolean userExists( ProfNetwork esql, String requestedUser){
+	    try{
+
+			String query = String.format("SELECT * FROM USR WHERE userId='%s' " , requestedUser);  
+			int numResult = esql.executeQuery(query);
+
+			if( numResult > 0){
+				return true;
+			}
+
+		}catch(Exception e){
+			System.err.println(e.getMessage() );
+		  }
+
+			return false;
+	}
+
 	public static void SendMsg(ProfNetwork esql, String authorisedUser){
 
 	  try{
 
-	  List<List<String> > fList = new ArrayList<List<String> >();
-	  fList=ViewFriendsSimple(esql, authorisedUser); 
+		  System.out.println("Type the username of the user you would like to send a message to (Enter 'n' to exit) : ");
+		  String requestedUser = in.readLine().trim();
 
-	  System.out.println("Type the name of the friend you would like to send a message to (Enter 'n' to exit) : ");
-	  String friendChoice = in.readLine();
-	  friendChoice = friendChoice.trim();
+		  if( requestedUser.equals("n")){
+			  return;
+		  }
 
-	  if( friendChoice.equals("n")){
-		  return;
-	  }
-	  for(int i = 0; i  < fList.get(0).size();  i++) {
-			 if ( fList.get(i).get(0).trim().equals(friendChoice) ){
-				NewMessage(esql, authorisedUser, friendChoice);
-				return;
-			 }
-	  }
-	  System.out.println("User not found in friend list");
-		return;   
-	 }catch(Exception e){
-	   System.err.println(e.getMessage() );
-	 }
+		  else if( userExists( esql, requestedUser) ){ 
+
+		  	NewMessage(esql, authorisedUser.trim(), requestedUser);
+
+		  }
+
+		  else{
+
+		  	System.out.println("User not found in friend list");
+			return;   
+		}
+
+		}catch(Exception e){
+		   System.err.println(e.getMessage() );
+		}
 
 	}
-	}//end ProfNetwork
+}//end ProfNetwork
