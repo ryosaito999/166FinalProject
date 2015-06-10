@@ -9,6 +9,13 @@
  * Target DBMS: 'Postgres'
  *
  */
+
+
+//Group 24
+//Ryota Saito ID:861057726 rsait001
+//Rachel Law  ID:861071722 rlaw001
+
+
 import java.sql.DriverManager;
 import java.sql.Connection;
 import java.sql.Statement;
