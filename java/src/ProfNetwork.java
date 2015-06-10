@@ -1163,7 +1163,7 @@ public class ProfNetwork {
 	    //Pending Friends
 	    List<List<String> > pfl_2d = new ArrayList<List<String> >();
 	    List<String> pfl = new ArrayList<String>();
-	    String query = String.format("Select C.connectionId FROM CONNECTION_USR C WHERE C.userId='%s' AND C.status='Request' UNION Select C2.userId FROM CONNECTION_USR C2 WHERE C2.connectionId='%s' AND C2.status='Request'", requester, requester);
+	    String query = String.format("Select C2.userId FROM CONNECTION_USR C2 WHERE C2.connectionId='%s' AND C2.status='Request'", requester);
 	    pfl_2d = esql.executeQueryAndReturnResult(query);
 	    for ( int i = 0; i < pfl_2d.size(); ++i){
 		//System.out.print(i + ". ");
